@@ -62,7 +62,7 @@ export default async function CatalogPage({
   ]);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-10 md:px-14">
+    <main className="w-full px-6 py-10 md:px-14">
       <div className="mb-8 flex items-baseline gap-3">
         <h1 className="font-serif text-[34px] font-medium text-ink">Наручні годинники</h1>
         <span className="font-sans text-[15px] text-brass">
@@ -98,7 +98,7 @@ export default async function CatalogPage({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
               {productsResponse.items.map((product) => (
                 <ProductCard
                   key={product.id}

@@ -71,7 +71,7 @@ export default async function ProductPage({
   const rightColumn = characteristics.slice(half);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-8 md:px-14">
+    <main className="w-full px-6 py-8 md:px-14">
       <nav className="mb-6 font-sans text-[13px] text-leather">
         <Link href="/">Головна</Link>
         <span className="mx-2 text-edge">/</span>
@@ -203,7 +203,7 @@ export default async function ProductPage({
       {similar.length > 0 ? (
         <section className="mt-16">
           <h2 className="mb-6 font-serif text-2xl font-medium text-ink">Схожі моделі</h2>
-          <div className="grid grid-cols-2 gap-7 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
             {similar.map((item) => (
               <ProductCard
                 key={item.id}
