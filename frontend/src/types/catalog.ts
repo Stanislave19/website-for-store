@@ -4,6 +4,7 @@ export interface ProductListItem {
   id: number;
   slug: string;
   name: string;
+  description: string | null;
   price: number;
   old_price: number | null;
   brand: string;

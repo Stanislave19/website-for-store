@@ -49,6 +49,7 @@ def read_products(
             id=product.id,
             slug=product.slug,
             name=product.name,
+            description=product.description,
             price=float(product.price),
             old_price=float(product.old_price) if product.old_price is not None else None,
             brand=product.brand.name,

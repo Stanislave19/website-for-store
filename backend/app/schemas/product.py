@@ -19,6 +19,7 @@ class ProductListItem(BaseModel):
     id: int
     slug: str
     name: str
+    description: str | None
     price: float
     old_price: float | None
     brand: str
