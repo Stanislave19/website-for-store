@@ -31,13 +31,13 @@
 
 ## Команди
 
-<!-- Впиши сюди після розгортання проєкту. Claude Code не має їх вгадувати. -->
-- Backend dev: TODO
-- Backend тести: TODO
-- Frontend dev: TODO
-- Frontend build: TODO
-- Пакетний менеджер (frontend): TODO (напр. npm / pnpm — не вгадувати)
-- Міграції (Alembic): TODO
+- Усе разом (backend + frontend + PostgreSQL + nginx): `docker-compose up` (з кореня проєкту)
+- Backend dev (без Docker, з `backend/`): `uvicorn app.main:app --reload`
+- Backend тести (з `backend/`): TODO — з'явиться разом із першими тестами
+- Frontend dev (без Docker, з `frontend/`): `npm run dev`
+- Frontend build (з `frontend/`): `npm run build`
+- Пакетний менеджер (frontend): npm
+- Міграції (Alembic, з `backend/`): TODO — з'явиться на Етапі 1 (перша міграція)
 
 ## Правила
 
