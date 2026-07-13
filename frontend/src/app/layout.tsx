@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin", "latin-ext"],
@@ -27,7 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk" className={`${fraunces.variable} ${workSans.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Header />
+        <div className="flex-1">{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }
