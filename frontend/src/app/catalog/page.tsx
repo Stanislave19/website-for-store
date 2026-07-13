@@ -1,0 +1,122 @@
+import type { Metadata } from "next";
+
+import { getCategories, getFilters, getProducts } from "@/lib/api";
+import { FilterPanel } from "@/components/catalog/FilterPanel";
+import { Pagination } from "@/components/catalog/Pagination";
+import { ProductCard } from "@/components/catalog/ProductCard";
+import { SortDropdown } from "@/components/catalog/SortDropdown";
+import type { CatalogSearchParams } from "@/lib/catalog-query";
+import { getParam, getParamList } from "@/lib/catalog-query";
+import { pluralize } from "@/lib/pluralize";
+import type { Gender, SortOption } from "@/types/catalog";
+
+export const metadata: Metadata = {
+  title: "Каталог наручних годинників — LEROM Watch Co.",
+  description: "Каталог наручних годинників з фільтрами за брендом, ціною, механізмом і стилем.",
+};
+
+const SORT_VALUES: SortOption[] = ["newest", "price_asc", "price_desc"];
+
+function toNumber(value: string | undefined): number | undefined {
+  if (value === undefined) return undefined;
+  const num = Number(value);
+  return Number.isFinite(num) ? num : undefined;
+}
+
+export default async function CatalogPage({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}) {
+  const params = await searchParams;
+
+  const category = toNumber(getParam(params, "category"));
+  const brand = toNumber(getParam(params, "brand"));
+  const genderParam = getParam(params, "gender");
+  const gender = genderParam as Gender | undefined;
+  const mechanism = toNumber(getParam(params, "mechanism"));
+  const priceMin = toNumber(getParam(params, "price_min"));
+  const priceMax = toNumber(getParam(params, "price_max"));
+  const attributeValueIds = getParamList(params, "attribute_value_ids")
+    .map(Number)
+    .filter(Number.isFinite);
+  const search = getParam(params, "search");
+  const sortParam = getParam(params, "sort");
+  const sort = SORT_VALUES.includes(sortParam as SortOption) ? (sortParam as SortOption) : "newest";
+  const page = toNumber(getParam(params, "page")) ?? 1;
+
+  const [productsResponse, categories, filters] = await Promise.all([
+    getProducts({
+      category,
+      brand,
+      gender,
+      mechanism,
+      price_min: priceMin,
+      price_max: priceMax,
+      attribute_value_ids: attributeValueIds,
+      search,
+      sort,
+      page,
+    }),
+    getCategories(),
+    getFilters(),
+  ]);
+
+  return (
+    <main className="mx-auto max-w-7xl px-6 py-10 md:px-14">
+      <div className="mb-8 flex items-baseline gap-3">
+        <h1 className="font-serif text-[34px] font-medium text-ink">Наручні годинники</h1>
+        <span className="font-sans text-[15px] text-brass">
+          {productsResponse.total}{" "}
+          {pluralize(productsResponse.total, ["модель", "моделі", "моделей"])}
+        </span>
+      </div>
+
+      <details className="mb-6 md:hidden">
+        <summary className="cursor-pointer rounded-[3px] border border-edge px-4 py-3 font-sans text-sm text-ink">
+          Фільтри
+        </summary>
+        <div className="mt-4">
+          <FilterPanel categories={categories} filters={filters} searchParams={params} />
+        </div>
+      </details>
+
+      <div className="flex flex-col gap-10 md:flex-row">
+        <div className="hidden md:block">
+          <FilterPanel categories={categories} filters={filters} searchParams={params} />
+        </div>
+
+        <div className="flex-1">
+          <div className="mb-6 flex justify-end">
+            <SortDropdown />
+          </div>
+
+          {productsResponse.items.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 border border-edge bg-white py-20 text-center">
+              <p className="font-serif text-xl text-ink">Нічого не знайдено</p>
+              <p className="font-sans text-sm text-leather">
+                Спробуйте змінити фільтри або скинути їх.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-7 md:grid-cols-4">
+              {productsResponse.items.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  slug={product.slug}
+                  name={product.name}
+                  description={product.description}
+                  price={product.price}
+                  oldPrice={product.old_price}
+                  brand={product.brand}
+                />
+              ))}
+            </div>
+          )}
+
+          <Pagination page={productsResponse.page} pages={productsResponse.pages} searchParams={params} />
+        </div>
+      </div>
+    </main>
+  );
+}
