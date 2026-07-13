@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class FilterOption(BaseModel):
     value: str
+    label: str
     count: int
 
 

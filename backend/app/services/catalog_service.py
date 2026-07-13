@@ -3,8 +3,15 @@ from collections import defaultdict
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.constants import Gender
 from app.models.attributes import AttributeType, AttributeValue, ProductAttribute
 from app.models.catalog import Brand, Category, MechanismType, Product
+
+GENDER_LABELS = {
+    Gender.male: "Чоловічі",
+    Gender.female: "Жіночі",
+    Gender.unisex: "Унісекс",
+}
 
 
 def get_category_tree(db: Session) -> list[dict]:
@@ -51,7 +58,9 @@ def get_categorical_filters(db: Session) -> list[dict]:
         {
             "key": "brand",
             "label": "Бренд",
-            "options": [{"value": str(bid), "count": count} for bid, _, count in brand_rows],
+            "options": [
+                {"value": str(bid), "label": name, "count": count} for bid, name, count in brand_rows
+            ],
         }
     )
 
@@ -65,7 +74,9 @@ def get_categorical_filters(db: Session) -> list[dict]:
         {
             "key": "mechanism",
             "label": "Тип механізму",
-            "options": [{"value": str(mid), "count": count} for mid, _, count in mechanism_rows],
+            "options": [
+                {"value": str(mid), "label": name, "count": count} for mid, name, count in mechanism_rows
+            ],
         }
     )
 
@@ -78,28 +89,34 @@ def get_categorical_filters(db: Session) -> list[dict]:
         {
             "key": "gender",
             "label": "Стать",
-            "options": [{"value": gender.value, "count": count} for gender, count in gender_rows],
+            "options": [
+                {"value": gender.value, "label": GENDER_LABELS[gender], "count": count}
+                for gender, count in gender_rows
+            ],
         }
     )
 
     attribute_type_rows = db.execute(select(AttributeType)).scalars().all()
     for attribute_type in attribute_type_rows:
         value_rows = db.execute(
-            select(AttributeValue.id, func.count(Product.id))
+            select(AttributeValue.id, AttributeValue.value, func.count(Product.id))
             .join(ProductAttribute, ProductAttribute.attribute_value_id == AttributeValue.id)
             .join(Product, Product.id == ProductAttribute.product_id)
             .where(
                 AttributeValue.attribute_type_id == attribute_type.id,
                 Product.is_active.is_(True),
             )
-            .group_by(AttributeValue.id)
+            .group_by(AttributeValue.id, AttributeValue.value)
         ).all()
         if value_rows:
             groups.append(
                 {
                     "key": f"attr_{attribute_type.id}",
                     "label": attribute_type.name,
-                    "options": [{"value": str(vid), "count": count} for vid, count in value_rows],
+                    "options": [
+                        {"value": str(vid), "label": value, "count": count}
+                        for vid, value, count in value_rows
+                    ],
                 }
             )
 
