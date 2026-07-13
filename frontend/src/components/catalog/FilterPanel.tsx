@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { CategoryNode, FiltersResponse } from "@/types/catalog";
+import type { FiltersResponse } from "@/types/catalog";
 import type { CatalogSearchParams } from "@/lib/catalog-query";
 import { getParam, getParamList, toggleMultiHref, toggleSingleHref } from "@/lib/catalog-query";
 
@@ -9,12 +9,11 @@ import { MoreFilters } from "./MoreFilters";
 import { PriceFilter } from "./PriceFilter";
 
 interface FilterPanelProps {
-  categories: CategoryNode[];
   filters: FiltersResponse;
   searchParams: CatalogSearchParams;
 }
 
-const MAIN_GROUP_KEYS = ["gender", "brand", "mechanism"];
+const ORDERED_MAIN_KEYS = ["category", "gender", "brand"];
 
 function FilterGroupBlock({
   title,
@@ -31,29 +30,20 @@ function FilterGroupBlock({
   );
 }
 
-export function FilterPanel({ categories, filters, searchParams }: FilterPanelProps) {
-  const activeCategory = getParam(searchParams, "category");
+export function FilterPanel({ filters, searchParams }: FilterPanelProps) {
   const activeAttributeValues = getParamList(searchParams, "attribute_value_ids");
 
-  const mainGroups = filters.categorical.filter((group) => MAIN_GROUP_KEYS.includes(group.key));
-  const extraGroups = filters.categorical.filter((group) => !MAIN_GROUP_KEYS.includes(group.key));
+  const groupByKey = (key: string) => filters.categorical.find((group) => group.key === key);
+  const extraGroups = filters.categorical.filter(
+    (group) => !ORDERED_MAIN_KEYS.includes(group.key) && group.key !== "mechanism",
+  );
 
   return (
-    <aside className="flex w-full flex-col gap-8 md:w-[260px] md:shrink-0">
-      <FilterGroupBlock title="Категорія">
-        {categories.map((category) => (
-          <FilterTag
-            key={category.id}
-            href={toggleSingleHref(searchParams, "category", String(category.id))}
-            label={category.name}
-            active={activeCategory === String(category.id)}
-          />
-        ))}
-      </FilterGroupBlock>
-
-      {mainGroups
-        .filter((group) => group.key === "gender")
-        .map((group) => (
+    <aside className="flex w-full flex-col gap-8 lg:w-[260px] lg:shrink-0">
+      {ORDERED_MAIN_KEYS.map((key) => {
+        const group = groupByKey(key);
+        if (!group) return null;
+        return (
           <FilterGroupBlock key={group.key} title={group.label}>
             {group.options.map((option) => (
               <FilterTag
@@ -65,23 +55,8 @@ export function FilterPanel({ categories, filters, searchParams }: FilterPanelPr
               />
             ))}
           </FilterGroupBlock>
-        ))}
-
-      {mainGroups
-        .filter((group) => group.key === "brand")
-        .map((group) => (
-          <FilterGroupBlock key={group.key} title={group.label}>
-            {group.options.map((option) => (
-              <FilterTag
-                key={option.value}
-                href={toggleSingleHref(searchParams, group.key, option.value)}
-                label={option.label}
-                count={option.count}
-                active={getParam(searchParams, group.key) === option.value}
-              />
-            ))}
-          </FilterGroupBlock>
-        ))}
+        );
+      })}
 
       <div className="flex flex-col gap-3">
         <h3 className="font-serif text-[15px] font-medium text-ink">Ціна</h3>
@@ -92,10 +67,11 @@ export function FilterPanel({ categories, filters, searchParams }: FilterPanelPr
         />
       </div>
 
-      {mainGroups
-        .filter((group) => group.key === "mechanism")
-        .map((group) => (
-          <FilterGroupBlock key={group.key} title={group.label}>
+      {(() => {
+        const group = groupByKey("mechanism");
+        if (!group) return null;
+        return (
+          <FilterGroupBlock title={group.label}>
             {group.options.map((option) => (
               <FilterTag
                 key={option.value}
@@ -106,7 +82,8 @@ export function FilterPanel({ categories, filters, searchParams }: FilterPanelPr
               />
             ))}
           </FilterGroupBlock>
-        ))}
+        );
+      })()}
 
       {extraGroups.length > 0 ? (
         <MoreFilters>

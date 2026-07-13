@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { getCategories, getFilters, getProducts } from "@/lib/api";
+import { getFilters, getProducts } from "@/lib/api";
 import { FilterPanel } from "@/components/catalog/FilterPanel";
 import { Pagination } from "@/components/catalog/Pagination";
 import { ProductCard } from "@/components/catalog/ProductCard";
@@ -45,7 +45,7 @@ export default async function CatalogPage({
   const sort = SORT_VALUES.includes(sortParam as SortOption) ? (sortParam as SortOption) : "newest";
   const page = toNumber(getParam(params, "page")) ?? 1;
 
-  const [productsResponse, categories, filters] = await Promise.all([
+  const [productsResponse, filters] = await Promise.all([
     getProducts({
       category,
       brand,
@@ -58,7 +58,6 @@ export default async function CatalogPage({
       sort,
       page,
     }),
-    getCategories(),
     getFilters(),
   ]);
 
@@ -72,18 +71,18 @@ export default async function CatalogPage({
         </span>
       </div>
 
-      <details className="mb-6 md:hidden">
+      <details className="mb-6 lg:hidden">
         <summary className="cursor-pointer rounded-[3px] border border-edge px-4 py-3 font-sans text-sm text-ink">
           Фільтри
         </summary>
         <div className="mt-4">
-          <FilterPanel categories={categories} filters={filters} searchParams={params} />
+          <FilterPanel filters={filters} searchParams={params} />
         </div>
       </details>
 
-      <div className="flex flex-col gap-10 md:flex-row">
-        <div className="hidden md:block">
-          <FilterPanel categories={categories} filters={filters} searchParams={params} />
+      <div className="flex flex-col gap-10 lg:flex-row">
+        <div className="hidden lg:block">
+          <FilterPanel filters={filters} searchParams={params} />
         </div>
 
         <div className="flex-1">
@@ -99,7 +98,7 @@ export default async function CatalogPage({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-7 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
               {productsResponse.items.map((product) => (
                 <ProductCard
                   key={product.id}

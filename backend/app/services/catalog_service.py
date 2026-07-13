@@ -48,6 +48,22 @@ def _count_options(db: Session, id_column, name_column, model) -> list[tuple[str
 def get_categorical_filters(db: Session) -> list[dict]:
     groups = []
 
+    category_rows = db.execute(
+        select(Category.id, Category.name, func.count(Product.id))
+        .join(Product, Product.category_id == Category.id)
+        .where(Product.is_active.is_(True))
+        .group_by(Category.id, Category.name)
+    ).all()
+    groups.append(
+        {
+            "key": "category",
+            "label": "Категорія",
+            "options": [
+                {"value": str(cid), "label": name, "count": count} for cid, name, count in category_rows
+            ],
+        }
+    )
+
     brand_rows = db.execute(
         select(Brand.id, Brand.name, func.count(Product.id))
         .join(Product, Product.brand_id == Brand.id)

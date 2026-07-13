@@ -21,8 +21,10 @@ def get_or_create(db, model, defaults=None, **filters):
 def run():
     db = SessionLocal()
     try:
-        men = get_or_create(db, Category, name="Чоловічі", slug="mens")
-        women = get_or_create(db, Category, name="Жіночі", slug="womens")
+        classic = get_or_create(db, Category, name="Класичні", slug="classic")
+        sport = get_or_create(db, Category, name="Спортивні", slug="sport")
+        minimalist = get_or_create(db, Category, name="Мінімалістичні", slug="minimalist")
+        skeleton = get_or_create(db, Category, name="Скелетони", slug="skeleton")
 
         casio = get_or_create(db, Brand, name="Casio")
         seiko = get_or_create(db, Brand, name="Seiko")
@@ -45,7 +47,7 @@ def run():
                 "price": 2400,
                 "old_price": None,
                 "sku": "CAS-MTP-1234",
-                "category": men,
+                "category": classic,
                 "brand": casio,
                 "mechanism_type": quartz,
                 "gender": Gender.male,
@@ -58,7 +60,7 @@ def run():
                 "price": 1800,
                 "old_price": 2200,
                 "sku": "CAS-LTP-5678",
-                "category": women,
+                "category": minimalist,
                 "brand": casio,
                 "mechanism_type": quartz,
                 "gender": Gender.female,
@@ -71,7 +73,7 @@ def run():
                 "price": 8900,
                 "old_price": None,
                 "sku": "SEI-SRPB-99",
-                "category": men,
+                "category": sport,
                 "brand": seiko,
                 "mechanism_type": automatic,
                 "gender": Gender.male,
@@ -84,7 +86,7 @@ def run():
                 "price": 5400,
                 "old_price": None,
                 "sku": "SEI-SUR-42",
-                "category": women,
+                "category": classic,
                 "brand": seiko,
                 "mechanism_type": quartz,
                 "gender": Gender.female,
