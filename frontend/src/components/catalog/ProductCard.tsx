@@ -2,10 +2,10 @@
 
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
+import { useToast } from "@/components/ui/ToastProvider";
 
 import { PlaceholderImage } from "./PlaceholderImage";
 
@@ -26,7 +26,7 @@ function formatPrice(value: number): string {
 export function ProductCard({ id, slug, name, description, price, oldPrice }: ProductCardProps) {
   const { toggle, isWishlisted } = useWishlist();
   const { addItem } = useCart();
-  const [added, setAdded] = useState(false);
+  const { showToast } = useToast();
   const inWishlist = isWishlisted(id);
   const hasDiscount = oldPrice !== null && oldPrice > price;
 
@@ -75,12 +75,15 @@ export function ProductCard({ id, slug, name, description, price, oldPrice }: Pr
             type="button"
             onClick={() => {
               addItem(id, slug);
-              setAdded(true);
-              setTimeout(() => setAdded(false), 1200);
+              showToast({
+                message: `${name} додано в кошик`,
+                actionLabel: "Перейти в кошик",
+                actionHref: "/cart",
+              });
             }}
             className="shrink-0 rounded-[3px] bg-racing px-7 py-3.5 font-sans text-sm font-medium whitespace-nowrap text-cream"
           >
-            {added ? "Додано" : "Купити"}
+            Купити
           </button>
         </div>
       </div>

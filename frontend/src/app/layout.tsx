@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { ToastProvider } from "@/components/ui/ToastProvider";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -31,9 +32,11 @@ export default function RootLayout({
   return (
     <html lang="uk" className={`${fraunces.variable} ${workSans.variable}`}>
       <body suppressHydrationWarning>
-        <Header />
-        <div className="flex-1">{children}</div>
-        <Footer />
+        <ToastProvider>
+          <Header />
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );
