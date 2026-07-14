@@ -3,20 +3,32 @@
 import { useSyncExternalStore } from "react";
 
 const listeners = new Map<string, Set<() => void>>();
+const cache = new Map<string, { raw: string | null; value: unknown }>();
 
 function readStore<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
+
+  const raw = window.localStorage.getItem(key);
+  const cached = cache.get(key);
+  if (cached && cached.raw === raw) {
+    return cached.value as T;
   }
+
+  let value = fallback;
+  try {
+    value = raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    value = fallback;
+  }
+  cache.set(key, { raw, value });
+  return value;
 }
 
 function writeStore<T>(key: string, value: T) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(key, JSON.stringify(value));
+  const raw = JSON.stringify(value);
+  window.localStorage.setItem(key, raw);
+  cache.set(key, { raw, value });
   for (const listener of listeners.get(key) ?? []) listener();
 }
 
