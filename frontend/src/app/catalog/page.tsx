@@ -102,6 +102,7 @@ export default async function CatalogPage({
               {productsResponse.items.map((product) => (
                 <ProductCard
                   key={product.id}
+                  id={product.id}
                   slug={product.slug}
                   name={product.name}
                   description={product.description}

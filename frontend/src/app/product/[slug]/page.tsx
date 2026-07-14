@@ -1,9 +1,10 @@
-import { Heart, Package, Shield } from "lucide-react";
+import { Package, Shield } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/components/catalog/ProductCard";
+import { ProductActions } from "@/components/product/ProductActions";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { getProductBySlug, getProducts } from "@/lib/api";
@@ -109,20 +110,7 @@ export default async function ProductPage({
             </p>
           ) : null}
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              className="rounded-[3px] bg-racing px-8 py-4 font-sans text-[15px] font-medium text-cream sm:w-[65%]"
-            >
-              Купити
-            </button>
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 rounded-[3px] border border-edge px-6 py-4 font-sans text-[15px] font-medium text-ink"
-            >
-              <Heart size={18} />В обране
-            </button>
-          </div>
+          <ProductActions productId={product.id} slug={product.slug} />
 
           <div className="flex flex-col gap-2 pt-2">
             {[
@@ -207,6 +195,7 @@ export default async function ProductPage({
             {similar.map((item) => (
               <ProductCard
                 key={item.id}
+                id={item.id}
                 slug={item.slug}
                 name={item.name}
                 description={item.description}

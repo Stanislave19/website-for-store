@@ -82,6 +82,7 @@ export default async function Home() {
           {popular.items.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               slug={product.slug}
               name={product.name}
               description={product.description}
@@ -121,6 +122,7 @@ export default async function Home() {
           {newArrivals.items.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               slug={product.slug}
               name={product.name}
               description={product.description}

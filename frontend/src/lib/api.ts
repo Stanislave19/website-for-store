@@ -4,6 +4,7 @@ import type {
   ProductDetail,
   ProductListParams,
   ProductListResponse,
+  PromoValidateResponse,
 } from "@/types/catalog";
 
 const API_URL =
@@ -49,4 +50,20 @@ export function getCategories(): Promise<CategoryNode[]> {
 
 export function getFilters(): Promise<FiltersResponse> {
   return apiFetch<FiltersResponse>("/filters");
+}
+
+export async function validatePromoCode(
+  code: string,
+  cartTotal: number,
+): Promise<PromoValidateResponse> {
+  const res = await fetch(`${API_URL}/cart/validate-promo`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code, cart_total: cartTotal }),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Помилка перевірки промокоду (${res.status})`);
+  }
+  return res.json() as Promise<PromoValidateResponse>;
 }

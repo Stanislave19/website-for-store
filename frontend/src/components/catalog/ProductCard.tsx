@@ -4,9 +4,13 @@ import { Heart } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
+
 import { PlaceholderImage } from "./PlaceholderImage";
 
 export interface ProductCardProps {
+  id: number;
   slug: string;
   name: string;
   description: string | null;
@@ -19,8 +23,11 @@ function formatPrice(value: number): string {
   return `${Math.round(value).toLocaleString("uk-UA")} ₴`;
 }
 
-export function ProductCard({ slug, name, description, price, oldPrice }: ProductCardProps) {
-  const [inWishlist, setInWishlist] = useState(false);
+export function ProductCard({ id, slug, name, description, price, oldPrice }: ProductCardProps) {
+  const { toggle, isWishlisted } = useWishlist();
+  const { addItem } = useCart();
+  const [added, setAdded] = useState(false);
+  const inWishlist = isWishlisted(id);
   const hasDiscount = oldPrice !== null && oldPrice > price;
 
   return (
@@ -32,7 +39,7 @@ export function ProductCard({ slug, name, description, price, oldPrice }: Produc
           aria-label={inWishlist ? "Прибрати з обраного" : "Додати в обране"}
           onClick={(event) => {
             event.preventDefault();
-            setInWishlist((value) => !value);
+            toggle(id, slug);
           }}
           className="absolute right-4 bottom-4 flex h-9 w-9 items-center justify-center rounded-full border border-edge bg-white"
         >
@@ -66,9 +73,14 @@ export function ProductCard({ slug, name, description, price, oldPrice }: Produc
 
           <button
             type="button"
+            onClick={() => {
+              addItem(id, slug);
+              setAdded(true);
+              setTimeout(() => setAdded(false), 1200);
+            }}
             className="shrink-0 rounded-[3px] bg-racing px-7 py-3.5 font-sans text-sm font-medium whitespace-nowrap text-cream"
           >
-            Купити
+            {added ? "Додано" : "Купити"}
           </button>
         </div>
       </div>

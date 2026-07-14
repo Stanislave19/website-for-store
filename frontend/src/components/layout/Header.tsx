@@ -4,7 +4,19 @@ import { Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
+
 import { Logo } from "./Logo";
+
+function CountBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <span className="absolute -top-2 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brass px-1 font-sans text-[10px] font-medium text-white">
+      {count}
+    </span>
+  );
+}
 
 const NAV_LINKS = [
   { href: "/catalog", label: "Каталог" },
@@ -15,6 +27,8 @@ const NAV_LINKS = [
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { count: cartCount } = useCart();
+  const { count: wishlistCount } = useWishlist();
 
   return (
     <header className="border-b border-edge bg-cream">
@@ -39,11 +53,13 @@ export function Header() {
           <Link href="/catalog" aria-label="Пошук">
             <Search size={22} className="text-ink" />
           </Link>
-          <Link href="/wishlist" aria-label="Список бажань">
+          <Link href="/wishlist" aria-label="Список бажань" className="relative">
             <Heart size={22} className="text-ink" />
+            <CountBadge count={wishlistCount} />
           </Link>
-          <Link href="/cart" aria-label="Кошик">
+          <Link href="/cart" aria-label="Кошик" className="relative">
             <ShoppingCart size={22} className="text-ink" />
+            <CountBadge count={cartCount} />
           </Link>
           <Link href="/account" aria-label="Кабінет">
             <User size={22} className="text-ink" />
@@ -76,11 +92,13 @@ export function Header() {
             <Link href="/catalog" aria-label="Пошук">
               <Search size={22} className="text-ink" />
             </Link>
-            <Link href="/wishlist" aria-label="Список бажань">
+            <Link href="/wishlist" aria-label="Список бажань" className="relative">
               <Heart size={22} className="text-ink" />
+              <CountBadge count={wishlistCount} />
             </Link>
-            <Link href="/cart" aria-label="Кошик">
+            <Link href="/cart" aria-label="Кошик" className="relative">
               <ShoppingCart size={22} className="text-ink" />
+              <CountBadge count={cartCount} />
             </Link>
             <Link href="/account" aria-label="Кабінет">
               <User size={22} className="text-ink" />

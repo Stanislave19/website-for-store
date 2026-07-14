@@ -84,6 +84,15 @@ export interface FiltersResponse {
 
 export type SortOption = "newest" | "price_asc" | "price_desc";
 
+export interface PromoValidateResponse {
+  valid: boolean;
+  discount_type: "percent" | "fixed" | null;
+  discount_value: number | null;
+  discount_amount: number;
+  total: number;
+  error: string | null;
+}
+
 export interface ProductListParams {
   category?: number;
   brand?: number;
