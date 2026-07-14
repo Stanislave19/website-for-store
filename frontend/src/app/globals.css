@@ -47,6 +47,11 @@ a {
   text-decoration: none;
 }
 
+:focus-visible {
+  outline: 2px solid var(--color-brass);
+  outline-offset: 2px;
+}
+
 .range-thumb::-webkit-slider-thumb {
   pointer-events: auto;
   appearance: none;
@@ -81,4 +86,19 @@ a {
 
 .animate-toast-in {
   animation: toast-in 0.2s ease-out;
+}
+
+@keyframes hero-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-hero-sweep {
+    animation: hero-sweep 60s linear infinite;
+  }
 }

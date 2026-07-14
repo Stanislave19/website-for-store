@@ -31,7 +31,7 @@ export function ProductCard({ id, slug, name, description, price, oldPrice }: Pr
   const hasDiscount = oldPrice !== null && oldPrice > price;
 
   return (
-    <div className="group flex h-full flex-col border border-edge bg-white">
+    <div className="group flex h-full flex-col border border-edge bg-white transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-brass">
       <Link href={`/product/${slug}`} className="relative block w-full">
         <PlaceholderImage />
         <button

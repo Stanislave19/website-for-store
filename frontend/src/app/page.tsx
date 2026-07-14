@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getFilters, getProducts } from "@/lib/api";
 import { PlaceholderImage } from "@/components/catalog/PlaceholderImage";
 import { ProductCard } from "@/components/catalog/ProductCard";
+import { HeroDial } from "@/components/home/HeroDial";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { pluralize } from "@/lib/pluralize";
 
@@ -11,6 +12,16 @@ const GENDER_LABELS: Record<string, string> = {
   female: "Жіночі",
   unisex: "Унісекс",
 };
+
+function SectionDivider() {
+  return (
+    <div className="mx-6 flex items-center gap-3 md:mx-14" aria-hidden="true">
+      <span className="h-px flex-1 bg-edge" />
+      <span className="h-3 w-px bg-brass" />
+      <span className="h-px flex-1 bg-edge" />
+    </div>
+  );
+}
 
 export default async function Home() {
   const [popular, newArrivals, filters] = await Promise.all([
@@ -39,10 +50,8 @@ export default async function Home() {
             Перейти до каталогу
           </Link>
         </div>
-        <div className="hidden border border-white/10 md:block">
-          <div className="flex aspect-4/3 items-center justify-center text-sm text-[#CFE0D2]">
-            фото годинника — hero
-          </div>
+        <div className="hidden md:block">
+          <HeroDial />
         </div>
       </section>
 
@@ -71,6 +80,8 @@ export default async function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       <section className="px-6 py-20 md:px-14">
         <div className="mb-7 flex items-center justify-between">
           <h2 className="font-serif text-[28px] font-medium text-ink">Популярні моделі</h2>
@@ -94,6 +105,8 @@ export default async function Home() {
         </div>
       </section>
 
+      <SectionDivider />
+
       <section className="bg-white px-6 py-20 md:px-14">
         <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
           <PlaceholderImage />
@@ -115,6 +128,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <SectionDivider />
 
       <section className="px-6 py-20 md:px-14">
         <h2 className="mb-7 font-serif text-[28px] font-medium text-ink">Нові надходження</h2>
