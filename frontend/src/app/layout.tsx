@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk" className={`${fraunces.variable} ${workSans.variable}`}>
-      <body>
+      <body suppressHydrationWarning>
         <Header />
         <div className="flex-1">{children}</div>
         <Footer />
