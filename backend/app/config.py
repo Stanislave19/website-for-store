@@ -9,7 +9,11 @@ class Settings(BaseSettings):
     backend_cors_origins: str = "http://localhost:3000"
 
     telegram_bot_token: str = ""
-    telegram_chat_id: str = ""
+    telegram_chat_ids: str = ""
+
+    @property
+    def telegram_chat_id_list(self) -> list[str]:
+        return [chat_id.strip() for chat_id in self.telegram_chat_ids.split(",") if chat_id.strip()]
 
 
 settings = Settings()

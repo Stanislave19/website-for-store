@@ -78,31 +78,32 @@ def _build_message(data: OrderNotificationData) -> str:
 
 
 def send_order_notification(data: OrderNotificationData) -> None:
-    if not settings.telegram_bot_token or not settings.telegram_chat_id:
+    chat_ids = settings.telegram_chat_id_list
+    if not settings.telegram_bot_token or not chat_ids:
         logger.warning(
             "Telegram-сповіщення для заявки №%s пропущено: TELEGRAM_BOT_TOKEN або "
-            "TELEGRAM_CHAT_ID не задані в .env",
+            "TELEGRAM_CHAT_IDS не задані в .env",
             data.order_id,
         )
         return
 
     url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage"
+    text = _build_message(data)
 
-    try:
-        response = httpx.post(
-            url,
-            json={"chat_id": settings.telegram_chat_id, "text": _build_message(data)},
-            timeout=10,
-        )
-        if response.status_code != 200:
+    for chat_id in chat_ids:
+        try:
+            response = httpx.post(url, json={"chat_id": chat_id, "text": text}, timeout=10)
+            if response.status_code != 200:
+                logger.error(
+                    "Telegram API повернув помилку для заявки №%s (отримувач %s): код %s",
+                    data.order_id,
+                    chat_id,
+                    response.status_code,
+                )
+        except httpx.HTTPError as exc:
             logger.error(
-                "Telegram API повернув помилку для заявки №%s: код %s",
+                "Не вдалося надіслати Telegram-сповіщення для заявки №%s (отримувач %s): %s",
                 data.order_id,
-                response.status_code,
+                chat_id,
+                type(exc).__name__,
             )
-    except httpx.HTTPError as exc:
-        logger.error(
-            "Не вдалося надіслати Telegram-сповіщення для заявки №%s: %s",
-            data.order_id,
-            type(exc).__name__,
-        )
