@@ -45,7 +45,7 @@ export default async function Home() {
           </p>
           <Link
             href="/catalog"
-            className="w-fit rounded-[3px] bg-brass px-7 py-4 font-sans text-[15px] font-medium text-white"
+            className="w-fit rounded-[3px] bg-brass px-7 py-4 font-sans text-[15px] font-medium text-ink"
           >
             Перейти до каталогу
           </Link>

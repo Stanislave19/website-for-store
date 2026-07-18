@@ -150,26 +150,29 @@ export default function CartPage() {
           <div className="sticky top-6 border border-edge bg-white p-7">
             <h2 className="mb-5 font-serif text-[22px] font-medium text-ink">Підсумок</h2>
 
-            <div className="mb-5 flex gap-2">
+            <div className={`flex gap-2 ${promo || promoError ? "mb-2" : "mb-5"}`}>
               <input
                 type="text"
                 value={promoCode}
                 onChange={(event) => setPromoCode(event.target.value)}
                 placeholder="Промокод"
-                className="w-full rounded-[3px] border border-edge px-3 py-2.5 font-sans text-sm text-ink outline-none focus:border-brass"
+                className={`w-full rounded-[3px] border px-3 py-2.5 font-sans text-sm text-ink outline-none ${
+                  promo ? "border-racing" : "border-edge focus:border-brass"
+                }`}
               />
               <button
                 type="button"
                 onClick={applyPromo}
                 disabled={applying || !promoCode.trim()}
-                className="shrink-0 rounded-[3px] border border-edge px-4 py-2.5 font-sans text-sm font-medium text-ink disabled:opacity-50"
+                className="shrink-0 rounded-[3px] bg-racing px-4 py-2.5 font-sans text-sm font-medium text-cream disabled:opacity-50"
               >
                 {applying ? "…" : "Застосувати"}
               </button>
             </div>
-            {promoError ? (
-              <p className="mb-5 -mt-3 font-sans text-xs text-error">{promoError}</p>
+            {promo ? (
+              <p className="mb-5 font-sans text-xs font-medium text-racing">✓ Промокод застосовано</p>
             ) : null}
+            {promoError ? <p className="mb-5 font-sans text-xs text-error">{promoError}</p> : null}
 
             <div className="border-t border-edge pt-4">
               <div className="flex justify-between py-1.5 font-sans text-sm">

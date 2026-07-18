@@ -12,7 +12,7 @@ import { Logo } from "./Logo";
 function CountBadge({ count }: { count: number }) {
   if (count === 0) return null;
   return (
-    <span className="absolute -top-2 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brass px-1 font-sans text-[10px] font-medium text-white">
+    <span className="absolute -top-2 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brass px-1 font-sans text-[10px] font-medium text-ink">
       {count}
     </span>
   );

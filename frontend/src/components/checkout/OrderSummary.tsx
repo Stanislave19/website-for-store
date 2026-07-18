@@ -85,17 +85,22 @@ export function OrderSummary({
           value={promoCode}
           onChange={(event) => onPromoCodeChange(event.target.value)}
           placeholder="Промокод"
-          className="w-full rounded-[3px] border border-edge px-3 py-2.5 font-sans text-sm text-ink outline-none focus:border-brass"
+          className={`w-full rounded-[3px] border px-3 py-2.5 font-sans text-sm text-ink outline-none ${
+            promoApplied ? "border-racing" : "border-edge focus:border-brass"
+          }`}
         />
         <button
           type="button"
           onClick={onApplyPromo}
           disabled={applyingPromo || !promoCode.trim()}
-          className="shrink-0 rounded-[3px] border border-edge px-4 py-2.5 font-sans text-sm font-medium text-ink disabled:opacity-50"
+          className="shrink-0 rounded-[3px] bg-racing px-4 py-2.5 font-sans text-sm font-medium text-cream disabled:opacity-50"
         >
           {applyingPromo ? "…" : "Застосувати"}
         </button>
       </div>
+      {promoApplied ? (
+        <p className="mt-2 font-sans text-xs font-medium text-racing">✓ Промокод застосовано</p>
+      ) : null}
       {promoError ? <p className="mt-2 font-sans text-xs text-error">{promoError}</p> : null}
 
       <div className="mt-4 border-t border-edge pt-4">
