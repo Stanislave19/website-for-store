@@ -44,6 +44,7 @@ class OrderNotificationData:
     items_total: float
     discount_amount: float
     total: float
+    promo_code: str | None
     items: list[OrderNotificationItem]
 
 
@@ -57,10 +58,12 @@ def _build_message(data: OrderNotificationData) -> str:
         lines.append(line)
 
     lines.append("")
-    if data.discount_amount:
-        lines.append(f"Сума: {data.total:.0f} ₴ (знижка {data.discount_amount:.0f} ₴)")
+    lines.append(f"Сума товарів: {data.items_total:.0f} ₴")
+    if data.promo_code:
+        lines.append(f"Промокод: {data.promo_code} (−{data.discount_amount:.0f} ₴)")
     else:
-        lines.append(f"Сума: {data.total:.0f} ₴")
+        lines.append("Промокод: не застосовано")
+    lines.append(f"Разом до сплати: {data.total:.0f} ₴")
 
     lines.append("")
     lines.append(f"Ім'я: {data.first_name}")

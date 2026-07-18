@@ -51,7 +51,7 @@ def create_order_endpoint(
     db: Session = Depends(get_db),
 ):
     try:
-        order = create_order(db, payload)
+        order, promo_code = create_order(db, payload)
     except ProductNotFoundError as exc:
         raise HTTPException(status_code=404, detail=f"Товари не знайдено або неактивні: {exc.product_ids}")
     except PromoInvalidError as exc:
@@ -74,6 +74,7 @@ def create_order_endpoint(
         items_total=float(order.items_total),
         discount_amount=float(order.discount_amount),
         total=float(order.total),
+        promo_code=promo_code,
         items=notification_items,
     )
     background_tasks.add_task(send_order_notification, notification)

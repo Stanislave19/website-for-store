@@ -20,7 +20,7 @@ class PromoInvalidError(Exception):
         super().__init__(message)
 
 
-def create_order(db: Session, payload: OrderCreateRequest) -> Order:
+def create_order(db: Session, payload: OrderCreateRequest) -> tuple[Order, str | None]:
     requested_ids = [item.product_id for item in payload.items]
 
     products = db.execute(
@@ -83,7 +83,7 @@ def create_order(db: Session, payload: OrderCreateRequest) -> Order:
 
     db.commit()
     db.refresh(order)
-    return order
+    return order, (promo.code if promo else None)
 
 
 def get_order_notification_items(db: Session, order_id: int) -> list[tuple[str, str, float, int]]:
