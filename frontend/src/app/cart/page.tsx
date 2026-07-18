@@ -2,99 +2,30 @@
 
 import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
 
 import { PlaceholderImage } from "@/components/catalog/PlaceholderImage";
 import { useCart } from "@/hooks/useCart";
-import { getProductBySlug, validatePromoCode } from "@/lib/api";
+import { useCartProducts } from "@/hooks/useCartProducts";
+import { usePromoCode } from "@/hooks/usePromoCode";
 import { pluralize } from "@/lib/pluralize";
-import type { ProductDetail } from "@/types/catalog";
 
 function formatPrice(value: number): string {
   return `${Math.round(value).toLocaleString("uk-UA")} ₴`;
 }
 
-interface AppliedPromo {
-  type: "percent" | "fixed";
-  value: number;
-  amount: number;
-}
-
 export default function CartPage() {
-  const { items, removeItem, setQuantity } = useCart();
-  const [products, setProducts] = useState<Record<string, ProductDetail>>({});
-  const [loadedKey, setLoadedKey] = useState<string | null>(null);
-  const [promoCode, setPromoCode] = useState("");
-  const [promoError, setPromoError] = useState<string | null>(null);
-  const [promo, setPromo] = useState<AppliedPromo | null>(null);
-  const [applying, setApplying] = useState(false);
+  const { setQuantity, removeItem } = useCart();
+  const { items, products, loading, itemsTotal } = useCartProducts();
+  const {
+    code: promoCode,
+    setCode: setPromoCode,
+    error: promoError,
+    promo,
+    applying,
+    apply: applyPromo,
+    discountAmount,
+  } = usePromoCode(itemsTotal);
 
-  const slugsKey = useMemo(() => [...items.map((item) => item.slug)].sort().join(","), [items]);
-  const loading = loadedKey !== slugsKey;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    Promise.all(
-      items.map(async (item) => {
-        try {
-          const product = await getProductBySlug(item.slug);
-          return { slug: item.slug, productId: item.productId, product };
-        } catch {
-          return { slug: item.slug, productId: item.productId, product: null };
-        }
-      }),
-    ).then((results) => {
-      if (cancelled) return;
-      const next: Record<string, ProductDetail> = {};
-      for (const result of results) {
-        if (result.product) {
-          next[result.slug] = result.product;
-        } else {
-          removeItem(result.productId);
-        }
-      }
-      setProducts(next);
-      setLoadedKey(slugsKey);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slugsKey]);
-
-  const itemsTotal = items.reduce((sum, item) => {
-    const product = products[item.slug];
-    return product ? sum + product.price * item.quantity : sum;
-  }, 0);
-
-  async function applyPromo() {
-    const code = promoCode.trim();
-    if (!code) return;
-    setApplying(true);
-    setPromoError(null);
-    try {
-      const result = await validatePromoCode(code, itemsTotal);
-      if (!result.valid) {
-        setPromo(null);
-        setPromoError(result.error ?? "Промокод недійсний");
-      } else {
-        setPromo({
-          type: (result.discount_type as "percent" | "fixed") ?? "fixed",
-          value: result.discount_value ?? 0,
-          amount: result.discount_amount,
-        });
-      }
-    } catch {
-      setPromo(null);
-      setPromoError("Не вдалося перевірити промокод. Спробуйте ще раз.");
-    } finally {
-      setApplying(false);
-    }
-  }
-
-  const discountAmount = promo?.amount ?? 0;
   const total = Math.max(0, itemsTotal - discountAmount);
 
   if (!loading && items.length === 0) {

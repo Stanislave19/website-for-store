@@ -6,6 +6,7 @@ import type {
   ProductListResponse,
   PromoValidateResponse,
 } from "@/types/catalog";
+import type { OrderCreateRequest, OrderCreateResponse } from "@/types/order";
 
 const API_URL =
   typeof window === "undefined"
@@ -66,4 +67,61 @@ export async function validatePromoCode(
     throw new Error(`Помилка перевірки промокоду (${res.status})`);
   }
   return res.json() as Promise<PromoValidateResponse>;
+}
+
+export class OrderApiError extends Error {
+  status: number;
+  promoError?: string;
+
+  constructor(status: number, message: string, promoError?: string) {
+    super(message);
+    this.status = status;
+    this.promoError = promoError;
+  }
+}
+
+interface PydanticErrorItem {
+  msg?: string;
+}
+
+export async function createOrder(payload: OrderCreateRequest): Promise<OrderCreateResponse> {
+  const res = await fetch(`${API_URL}/orders`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    let detail: unknown;
+    try {
+      detail = (await res.json()).detail;
+    } catch {
+      detail = undefined;
+    }
+
+    if (
+      res.status === 422 &&
+      detail &&
+      typeof detail === "object" &&
+      !Array.isArray(detail) &&
+      "promo_error" in detail
+    ) {
+      const promoError = (detail as { promo_error: string }).promo_error;
+      throw new OrderApiError(422, promoError, promoError);
+    }
+
+    if (res.status === 429) {
+      throw new OrderApiError(429, "Забагато заявок з цієї адреси. Спробуйте через хвилину.");
+    }
+
+    const message = Array.isArray(detail)
+      ? (detail as PydanticErrorItem[]).map((item) => item.msg).filter(Boolean).join("; ")
+      : typeof detail === "string"
+        ? detail
+        : "Не вдалося оформити замовлення. Спробуйте ще раз.";
+    throw new OrderApiError(res.status, message || "Не вдалося оформити замовлення.");
+  }
+
+  return res.json() as Promise<OrderCreateResponse>;
 }
