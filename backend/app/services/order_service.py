@@ -84,3 +84,12 @@ def create_order(db: Session, payload: OrderCreateRequest) -> Order:
     db.commit()
     db.refresh(order)
     return order
+
+
+def get_order_notification_items(db: Session, order_id: int) -> list[tuple[str, str, float, int]]:
+    rows = db.execute(
+        select(Product.name, Product.sku, OrderItem.price_at_order, OrderItem.quantity)
+        .join(OrderItem, OrderItem.product_id == Product.id)
+        .where(OrderItem.order_id == order_id)
+    ).all()
+    return [(name, sku, float(price), quantity) for name, sku, price, quantity in rows]
