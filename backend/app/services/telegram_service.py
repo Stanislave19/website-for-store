@@ -63,7 +63,8 @@ def _build_message(data: OrderNotificationData) -> str:
         lines.append(f"Сума: {data.total:.0f} ₴")
 
     lines.append("")
-    lines.append(f"Ім'я: {data.first_name} {data.last_name}")
+    lines.append(f"Ім'я: {data.first_name}")
+    lines.append(f"Прізвище: {data.last_name}")
     lines.append(f"Телефон: {data.phone}")
     if data.city:
         lines.append(f"Місто: {data.city}")
