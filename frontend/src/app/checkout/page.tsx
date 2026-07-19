@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { CityAutocomplete } from "@/components/checkout/CityAutocomplete";
 import { DeliveryMethodCard } from "@/components/checkout/DeliveryMethodCard";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
 import { useCart } from "@/hooks/useCart";
@@ -12,6 +13,7 @@ import { useCartProducts } from "@/hooks/useCartProducts";
 import { usePromoCode } from "@/hooks/usePromoCode";
 import { createOrder, OrderApiError } from "@/lib/api";
 import { isValidPhoneDigits, toFullPhone } from "@/lib/validators";
+import type { City } from "@/types/delivery";
 import type { ContactMethod, DeliveryMethod } from "@/types/order";
 
 const DELIVERY_OPTIONS: { value: DeliveryMethod; label: string; icon: typeof Truck }[] = [
@@ -55,6 +57,7 @@ export default function CheckoutPage() {
   const [phoneDigits, setPhoneDigits] = useState("");
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("nova_poshta");
   const [city, setCity] = useState("");
+  const [cityRef, setCityRef] = useState<string | undefined>(undefined);
   const [npOffice, setNpOffice] = useState("");
   const [contactMethod, setContactMethod] = useState<ContactMethod>("call");
   const [comment, setComment] = useState("");
@@ -65,6 +68,17 @@ export default function CheckoutPage() {
 
   const needsCity = deliveryMethod !== "pickup";
   const needsNpOffice = deliveryMethod === "nova_poshta";
+  const useNovaPoshtaAutocomplete = deliveryMethod === "nova_poshta";
+
+  function handleCityTextChange(value: string) {
+    setCity(value);
+    setCityRef(undefined);
+  }
+
+  function handleSelectCity(selected: City) {
+    setCity(selected.name);
+    setCityRef(selected.ref);
+  }
 
   function validate(): FieldErrors {
     const next: FieldErrors = {};
@@ -93,6 +107,7 @@ export default function CheckoutPage() {
         phone: toFullPhone(phoneDigits),
         delivery_method: deliveryMethod,
         city: needsCity ? city.trim() : undefined,
+        city_ref: needsCity && useNovaPoshtaAutocomplete ? cityRef : undefined,
         np_office: needsNpOffice ? npOffice.trim() : undefined,
         contact_method: contactMethod,
         comment: comment.trim() || undefined,
@@ -200,13 +215,22 @@ export default function CheckoutPage() {
 
             {needsCity ? (
               <Field label="Місто" required error={errors.city}>
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(event) => setCity(event.target.value)}
-                  placeholder="Ваше місто"
-                  className={inputClass(Boolean(errors.city))}
-                />
+                {useNovaPoshtaAutocomplete ? (
+                  <CityAutocomplete
+                    value={city}
+                    onChange={handleCityTextChange}
+                    onSelectCity={handleSelectCity}
+                    error={Boolean(errors.city)}
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(event) => setCity(event.target.value)}
+                    placeholder="Ваше місто"
+                    className={inputClass(Boolean(errors.city))}
+                  />
+                )}
               </Field>
             ) : null}
 

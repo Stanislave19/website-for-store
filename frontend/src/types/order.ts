@@ -13,7 +13,9 @@ export interface OrderCreateRequest {
   phone: string;
   delivery_method: DeliveryMethod;
   city?: string;
+  city_ref?: string;
   np_office?: string;
+  warehouse_ref?: string;
   contact_method: ContactMethod;
   comment?: string;
   promo_code?: string;

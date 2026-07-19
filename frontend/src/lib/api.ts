@@ -6,6 +6,7 @@ import type {
   ProductListResponse,
   PromoValidateResponse,
 } from "@/types/catalog";
+import type { City, Warehouse } from "@/types/delivery";
 import type { OrderCreateRequest, OrderCreateResponse } from "@/types/order";
 
 const API_URL =
@@ -67,6 +68,23 @@ export async function validatePromoCode(
     throw new Error(`Помилка перевірки промокоду (${res.status})`);
   }
   return res.json() as Promise<PromoValidateResponse>;
+}
+
+export async function getCities(query: string): Promise<City[]> {
+  const res = await fetch(`${API_URL}/delivery/cities?query=${encodeURIComponent(query)}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) return [];
+  return res.json() as Promise<City[]>;
+}
+
+export async function getWarehouses(cityRef: string, query: string): Promise<Warehouse[]> {
+  const params = new URLSearchParams({ city_ref: cityRef, query });
+  const res = await fetch(`${API_URL}/delivery/warehouses?${params.toString()}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) return [];
+  return res.json() as Promise<Warehouse[]>;
 }
 
 export class OrderApiError extends Error {
