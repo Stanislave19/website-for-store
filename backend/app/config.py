@@ -13,6 +13,10 @@ class Settings(BaseSettings):
 
     nova_poshta_api_key: str = ""
 
+    admin_token_expire_minutes: int = 60 * 24 * 14
+    admin_cookie_name: str = "admin_token"
+    admin_cookie_secure: bool = False
+
     @property
     def telegram_chat_id_list(self) -> list[str]:
         return [chat_id.strip() for chat_id in self.telegram_chat_ids.split(",") if chat_id.strip()]
