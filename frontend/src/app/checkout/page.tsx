@@ -8,12 +8,13 @@ import { useState } from "react";
 import { CityAutocomplete } from "@/components/checkout/CityAutocomplete";
 import { DeliveryMethodCard } from "@/components/checkout/DeliveryMethodCard";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
+import { WarehouseAutocomplete } from "@/components/checkout/WarehouseAutocomplete";
 import { useCart } from "@/hooks/useCart";
 import { useCartProducts } from "@/hooks/useCartProducts";
 import { usePromoCode } from "@/hooks/usePromoCode";
 import { createOrder, OrderApiError } from "@/lib/api";
 import { isValidPhoneDigits, toFullPhone } from "@/lib/validators";
-import type { City } from "@/types/delivery";
+import type { City, Warehouse } from "@/types/delivery";
 import type { ContactMethod, DeliveryMethod } from "@/types/order";
 
 const DELIVERY_OPTIONS: { value: DeliveryMethod; label: string; icon: typeof Truck }[] = [
@@ -59,6 +60,7 @@ export default function CheckoutPage() {
   const [city, setCity] = useState("");
   const [cityRef, setCityRef] = useState<string | undefined>(undefined);
   const [npOffice, setNpOffice] = useState("");
+  const [warehouseRef, setWarehouseRef] = useState<string | undefined>(undefined);
   const [contactMethod, setContactMethod] = useState<ContactMethod>("call");
   const [comment, setComment] = useState("");
 
@@ -73,11 +75,25 @@ export default function CheckoutPage() {
   function handleCityTextChange(value: string) {
     setCity(value);
     setCityRef(undefined);
+    setNpOffice("");
+    setWarehouseRef(undefined);
   }
 
   function handleSelectCity(selected: City) {
     setCity(selected.name);
     setCityRef(selected.ref);
+    setNpOffice("");
+    setWarehouseRef(undefined);
+  }
+
+  function handleNpOfficeTextChange(value: string) {
+    setNpOffice(value);
+    setWarehouseRef(undefined);
+  }
+
+  function handleSelectWarehouse(selected: Warehouse) {
+    setNpOffice(selected.description);
+    setWarehouseRef(selected.ref);
   }
 
   function validate(): FieldErrors {
@@ -109,6 +125,7 @@ export default function CheckoutPage() {
         city: needsCity ? city.trim() : undefined,
         city_ref: needsCity && useNovaPoshtaAutocomplete ? cityRef : undefined,
         np_office: needsNpOffice ? npOffice.trim() : undefined,
+        warehouse_ref: needsNpOffice ? warehouseRef : undefined,
         contact_method: contactMethod,
         comment: comment.trim() || undefined,
         promo_code: appliedCode,
@@ -237,12 +254,12 @@ export default function CheckoutPage() {
             {needsNpOffice ? (
               <div className="mt-4">
                 <Field label="Відділення" required error={errors.npOffice}>
-                  <input
-                    type="text"
+                  <WarehouseAutocomplete
                     value={npOffice}
-                    onChange={(event) => setNpOffice(event.target.value)}
-                    placeholder="Номер або адреса відділення"
-                    className={inputClass(Boolean(errors.npOffice))}
+                    onChange={handleNpOfficeTextChange}
+                    onSelectWarehouse={handleSelectWarehouse}
+                    cityRef={cityRef}
+                    error={Boolean(errors.npOffice)}
                   />
                 </Field>
               </div>
