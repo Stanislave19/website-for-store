@@ -49,6 +49,7 @@ class AdminProductDetail(BaseModel):
     mechanism_type_id: int
     gender: Gender
     case_diameter_mm: int | None
+    case_thickness_mm: int | None
     warranty_months: int | None
     package_contents: str | None
     is_active: bool
@@ -68,6 +69,7 @@ class ProductCreateRequest(BaseModel):
     mechanism_type_id: int
     gender: Gender
     case_diameter_mm: int | None = None
+    case_thickness_mm: int | None = None
     warranty_months: int | None = None
     package_contents: str | None = None
     is_active: bool = True
@@ -85,6 +87,7 @@ class ProductUpdateRequest(BaseModel):
     mechanism_type_id: int | None = None
     gender: Gender | None = None
     case_diameter_mm: int | None = None
+    case_thickness_mm: int | None = None
     warranty_months: int | None = None
     package_contents: str | None = None
     is_active: bool | None = None

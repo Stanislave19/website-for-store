@@ -54,6 +54,7 @@ class Product(Base):
     mechanism_type_id: Mapped[int] = mapped_column(ForeignKey("mechanism_types.id"))
     gender: Mapped[Gender] = mapped_column()
     case_diameter_mm: Mapped[int | None] = mapped_column(nullable=True)
+    case_thickness_mm: Mapped[int | None] = mapped_column(nullable=True)
     warranty_months: Mapped[int | None] = mapped_column(nullable=True)
     package_contents: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True)

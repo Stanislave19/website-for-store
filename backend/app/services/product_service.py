@@ -59,6 +59,8 @@ def list_products(
     price_max: float | None = None,
     diameter_min: int | None = None,
     diameter_max: int | None = None,
+    thickness_min: int | None = None,
+    thickness_max: int | None = None,
     attribute_value_ids: list[int] | None = None,
     search: str | None = None,
     sort: str = "newest",
@@ -84,6 +86,10 @@ def list_products(
         query = query.where(Product.case_diameter_mm >= diameter_min)
     if diameter_max is not None:
         query = query.where(Product.case_diameter_mm <= diameter_max)
+    if thickness_min is not None:
+        query = query.where(Product.case_thickness_mm >= thickness_min)
+    if thickness_max is not None:
+        query = query.where(Product.case_thickness_mm <= thickness_max)
     if search:
         pattern = f"%{search}%"
         query = query.join(Brand).where(

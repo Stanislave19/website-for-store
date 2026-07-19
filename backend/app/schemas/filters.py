@@ -22,3 +22,4 @@ class FiltersResponse(BaseModel):
     categorical: list[FilterGroup]
     price: NumericRange
     diameter: NumericRange
+    thickness: NumericRange

@@ -139,7 +139,9 @@ def get_categorical_filters(db: Session) -> list[dict]:
     return groups
 
 
-def get_numeric_ranges(db: Session) -> tuple[tuple[float, float], tuple[int, int]]:
+def get_numeric_ranges(
+    db: Session,
+) -> tuple[tuple[float, float], tuple[int, int], tuple[int, int]]:
     price_min, price_max = db.execute(
         select(func.min(Product.price), func.max(Product.price)).where(Product.is_active.is_(True))
     ).one()
@@ -148,6 +150,12 @@ def get_numeric_ranges(db: Session) -> tuple[tuple[float, float], tuple[int, int
             Product.is_active.is_(True)
         )
     ).one()
+    thickness_min, thickness_max = db.execute(
+        select(func.min(Product.case_thickness_mm), func.max(Product.case_thickness_mm)).where(
+            Product.is_active.is_(True)
+        )
+    ).one()
     price_range = (float(price_min or 0), float(price_max or 0))
     diameter_range = (int(diameter_min or 0), int(diameter_max or 0))
-    return price_range, diameter_range
+    thickness_range = (int(thickness_min or 0), int(thickness_max or 0))
+    return price_range, diameter_range, thickness_range
