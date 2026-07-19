@@ -34,11 +34,28 @@ def run():
 
         material_type = get_or_create(db, AttributeType, name="Матеріал корпусу")
         glass_type = get_or_create(db, AttributeType, name="Скло")
+        function_type = get_or_create(db, AttributeType, name="Функції")
+        index_type = get_or_create(db, AttributeType, name="Тип індексів")
 
         steel = get_or_create(db, AttributeValue, attribute_type_id=material_type.id, value="Сталь")
         brass = get_or_create(db, AttributeValue, attribute_type_id=material_type.id, value="Латунь")
         sapphire = get_or_create(db, AttributeValue, attribute_type_id=glass_type.id, value="Сапфірове")
         mineral = get_or_create(db, AttributeValue, attribute_type_id=glass_type.id, value="Мінеральне")
+
+        # "Функції" — товар може мати кілька значень одночасно (множинний вибір)
+        chronograph = get_or_create(db, AttributeValue, attribute_type_id=function_type.id, value="Хронограф")
+        date_function = get_or_create(db, AttributeValue, attribute_type_id=function_type.id, value="Дата")
+        alarm = get_or_create(db, AttributeValue, attribute_type_id=function_type.id, value="Будильник")
+        power_reserve = get_or_create(
+            db, AttributeValue, attribute_type_id=function_type.id, value="Індикатор запасу ходу"
+        )
+        compass = get_or_create(db, AttributeValue, attribute_type_id=function_type.id, value="Компас")
+        timer = get_or_create(db, AttributeValue, attribute_type_id=function_type.id, value="Таймер")
+
+        arabic_index = get_or_create(db, AttributeValue, attribute_type_id=index_type.id, value="Арабські цифри")
+        roman_index = get_or_create(db, AttributeValue, attribute_type_id=index_type.id, value="Римські цифри")
+        bar_index = get_or_create(db, AttributeValue, attribute_type_id=index_type.id, value="Рисочки/палички")
+        no_index = get_or_create(db, AttributeValue, attribute_type_id=index_type.id, value="Без цифр (мінімалізм)")
 
         products_data = [
             {
@@ -52,7 +69,7 @@ def run():
                 "mechanism_type": quartz,
                 "gender": Gender.male,
                 "case_diameter_mm": 40,
-                "attributes": [steel, mineral],
+                "attributes": [steel, mineral, arabic_index],
             },
             {
                 "name": "Casio Classic LTP-5678",
@@ -65,7 +82,7 @@ def run():
                 "mechanism_type": quartz,
                 "gender": Gender.female,
                 "case_diameter_mm": 34,
-                "attributes": [brass, mineral],
+                "attributes": [brass, mineral, no_index],
             },
             {
                 "name": "Seiko Presage SRPB-99",
@@ -78,7 +95,7 @@ def run():
                 "mechanism_type": automatic,
                 "gender": Gender.male,
                 "case_diameter_mm": 42,
-                "attributes": [steel, sapphire],
+                "attributes": [steel, sapphire, bar_index, chronograph, date_function, power_reserve],
             },
             {
                 "name": "Seiko Lady SUR-42",
@@ -91,7 +108,7 @@ def run():
                 "mechanism_type": quartz,
                 "gender": Gender.female,
                 "case_diameter_mm": 30,
-                "attributes": [steel, mineral],
+                "attributes": [steel, mineral, roman_index, alarm],
             },
         ]
 
