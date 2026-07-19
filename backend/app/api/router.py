@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.admin import auth as admin_auth
 from app.api.admin import products as admin_products
+from app.api.admin import references as admin_references
 from app.api.public import cart, catalog, delivery, orders, products
 
 api_router = APIRouter(prefix="/api")
@@ -12,3 +13,4 @@ api_router.include_router(orders.router, tags=["orders"])
 api_router.include_router(delivery.router, tags=["delivery"])
 api_router.include_router(admin_auth.router, tags=["admin-auth"])
 api_router.include_router(admin_products.router, tags=["admin-products"])
+api_router.include_router(admin_references.router, tags=["admin-references"])
