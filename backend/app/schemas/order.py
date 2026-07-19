@@ -26,7 +26,9 @@ class OrderCreateRequest(BaseModel):
     phone: str
     delivery_method: DeliveryMethod
     city: str | None = None
+    city_ref: str | None = None
     np_office: str | None = None
+    warehouse_ref: str | None = None
     contact_method: ContactMethod
     comment: str | None = None
     promo_code: str | None = None
