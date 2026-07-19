@@ -20,6 +20,7 @@ from app.services.admin_product_service import (
     delete_product,
     get_admin_product,
     list_admin_products,
+    to_admin_product_detail,
     update_product,
 )
 
@@ -63,27 +64,29 @@ def create_admin_product(payload: ProductCreateRequest, db: Session = Depends(ge
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except SkuAlreadyExistsError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
-    return product
+    return to_admin_product_detail(db, product)
 
 
 @router.get("/admin/products/{product_id}", response_model=AdminProductDetail)
 def read_admin_product(product_id: int, db: Session = Depends(get_db)):
     try:
-        return get_admin_product(db, product_id)
+        product = get_admin_product(db, product_id)
     except ProductNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Товар не знайдено") from exc
+    return to_admin_product_detail(db, product)
 
 
 @router.patch("/admin/products/{product_id}", response_model=AdminProductDetail)
 def update_admin_product(product_id: int, payload: ProductUpdateRequest, db: Session = Depends(get_db)):
     try:
-        return update_product(db, product_id, payload)
+        product = update_product(db, product_id, payload)
     except ProductNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Товар не знайдено") from exc
     except ReferenceNotFoundError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except SkuAlreadyExistsError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return to_admin_product_detail(db, product)
 
 
 @router.delete("/admin/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)

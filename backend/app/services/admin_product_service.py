@@ -4,10 +4,10 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.core.slug import make_unique_slug, slugify
-from app.models.attributes import ProductAttribute
+from app.models.attributes import AttributeValue, ProductAttribute
 from app.models.catalog import Brand, Category, MechanismType, Product
 from app.models.orders import OrderItem
-from app.schemas.admin_product import ProductCreateRequest, ProductUpdateRequest
+from app.schemas.admin_product import AdminProductDetail, ProductCreateRequest, ProductUpdateRequest
 
 
 class ProductNotFoundError(Exception):
@@ -41,6 +41,22 @@ def _validate_references(db: Session, category_id: int, brand_id: int, mechanism
         raise ReferenceNotFoundError("mechanism_type_id")
 
 
+def _validate_attribute_value_ids(db: Session, attribute_value_ids: list[int]) -> None:
+    if not attribute_value_ids:
+        return
+    found = db.execute(
+        select(AttributeValue.id).where(AttributeValue.id.in_(attribute_value_ids))
+    ).scalars().all()
+    if set(found) != set(attribute_value_ids):
+        raise ReferenceNotFoundError("attribute_value_ids")
+
+
+def _set_product_attributes(db: Session, product_id: int, attribute_value_ids: list[int]) -> None:
+    db.query(ProductAttribute).filter(ProductAttribute.product_id == product_id).delete()
+    for attribute_value_id in attribute_value_ids:
+        db.add(ProductAttribute(product_id=product_id, attribute_value_id=attribute_value_id))
+
+
 def list_admin_products(
     db: Session, *, search: str | None = None, page: int = 1, page_size: int = 24
 ) -> tuple[list[Product], int]:
@@ -71,8 +87,40 @@ def get_admin_product(db: Session, product_id: int) -> Product:
     return product
 
 
+def get_product_attribute_value_ids(db: Session, product_id: int) -> list[int]:
+    return list(
+        db.execute(
+            select(ProductAttribute.attribute_value_id).where(ProductAttribute.product_id == product_id)
+        ).scalars()
+    )
+
+
+def to_admin_product_detail(db: Session, product: Product) -> AdminProductDetail:
+    return AdminProductDetail(
+        id=product.id,
+        slug=product.slug,
+        name=product.name,
+        description=product.description,
+        price=float(product.price),
+        old_price=float(product.old_price) if product.old_price is not None else None,
+        sku=product.sku,
+        category_id=product.category_id,
+        brand_id=product.brand_id,
+        mechanism_type_id=product.mechanism_type_id,
+        gender=product.gender,
+        case_diameter_mm=product.case_diameter_mm,
+        warranty_months=product.warranty_months,
+        package_contents=product.package_contents,
+        is_active=product.is_active,
+        created_at=product.created_at,
+        images=list(product.images),
+        attribute_value_ids=get_product_attribute_value_ids(db, product.id),
+    )
+
+
 def create_product(db: Session, payload: ProductCreateRequest) -> Product:
     _validate_references(db, payload.category_id, payload.brand_id, payload.mechanism_type_id)
+    _validate_attribute_value_ids(db, payload.attribute_value_ids)
 
     if db.scalar(select(Product).where(Product.sku == payload.sku)):
         raise SkuAlreadyExistsError(payload.sku)
@@ -99,6 +147,10 @@ def create_product(db: Session, payload: ProductCreateRequest) -> Product:
         is_active=payload.is_active,
     )
     db.add(product)
+    db.flush()
+
+    _set_product_attributes(db, product.id, payload.attribute_value_ids)
+
     db.commit()
     db.refresh(product)
     return product
@@ -119,8 +171,15 @@ def update_product(db: Session, product_id: int, payload: ProductUpdateRequest) 
         if db.scalar(select(Product).where(Product.sku == update_data["sku"])):
             raise SkuAlreadyExistsError(update_data["sku"])
 
+    attribute_value_ids = update_data.pop("attribute_value_ids", None)
+    if attribute_value_ids is not None:
+        _validate_attribute_value_ids(db, attribute_value_ids)
+
     for field, value in update_data.items():
         setattr(product, field, value)
+
+    if attribute_value_ids is not None:
+        _set_product_attributes(db, product.id, attribute_value_ids)
 
     db.commit()
     db.refresh(product)

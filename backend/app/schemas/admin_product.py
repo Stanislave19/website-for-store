@@ -54,6 +54,7 @@ class AdminProductDetail(BaseModel):
     is_active: bool
     created_at: datetime
     images: list[AdminProductImageOut]
+    attribute_value_ids: list[int]
 
 
 class ProductCreateRequest(BaseModel):
@@ -70,6 +71,7 @@ class ProductCreateRequest(BaseModel):
     warranty_months: int | None = None
     package_contents: str | None = None
     is_active: bool = True
+    attribute_value_ids: list[int] = []
 
 
 class ProductUpdateRequest(BaseModel):
@@ -86,3 +88,4 @@ class ProductUpdateRequest(BaseModel):
     warranty_months: int | None = None
     package_contents: str | None = None
     is_active: bool | None = None
+    attribute_value_ids: list[int] | None = None
