@@ -1,23 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_staff_user
 from app.database import get_db
 from app.schemas.admin_product import (
     AdminProductDetail,
+    AdminProductImageOut,
     AdminProductListItem,
     AdminProductListResponse,
     ProductCreateRequest,
     ProductUpdateRequest,
 )
 from app.services.admin_product_service import (
+    ImageNotFoundError,
+    InvalidImageError,
     ProductHasOrdersError,
     ProductNotFoundError,
     ReferenceNotFoundError,
     SkuAlreadyExistsError,
+    add_product_image,
     admin_products_pages,
     create_product,
     delete_product,
+    delete_product_image,
     get_admin_product,
     list_admin_products,
     to_admin_product_detail,
@@ -97,3 +102,27 @@ def delete_admin_product(product_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Товар не знайдено") from exc
     except ProductHasOrdersError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.post(
+    "/admin/products/{product_id}/images",
+    response_model=AdminProductImageOut,
+    status_code=status.HTTP_201_CREATED,
+)
+async def upload_admin_product_image(
+    product_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)
+):
+    try:
+        return await add_product_image(db, product_id, file)
+    except ProductNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Товар не знайдено") from exc
+    except InvalidImageError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.delete("/admin/products/{product_id}/images/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_admin_product_image(product_id: int, image_id: int, db: Session = Depends(get_db)):
+    try:
+        delete_product_image(db, product_id, image_id)
+    except ImageNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Фото не знайдено") from exc

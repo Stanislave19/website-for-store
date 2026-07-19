@@ -1,13 +1,20 @@
 import math
+import os
+import uuid
+from pathlib import Path
 
+from fastapi import UploadFile
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
+from app.config import settings
 from app.core.slug import make_unique_slug, slugify
 from app.models.attributes import AttributeValue, ProductAttribute
-from app.models.catalog import Brand, Category, MechanismType, Product
+from app.models.catalog import Brand, Category, MechanismType, Product, ProductImage
 from app.models.orders import OrderItem
 from app.schemas.admin_product import AdminProductDetail, ProductCreateRequest, ProductUpdateRequest
+
+ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 
 class ProductNotFoundError(Exception):
@@ -30,6 +37,15 @@ class ProductHasOrdersError(Exception):
     def __init__(self, product_id: int):
         self.product_id = product_id
         super().__init__("Товар вже фігурує в заявках — видалення заборонено, деактивуйте його замість цього")
+
+
+class InvalidImageError(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
+class ImageNotFoundError(Exception):
+    pass
 
 
 def _validate_references(db: Session, category_id: int, brand_id: int, mechanism_type_id: int) -> None:
@@ -202,4 +218,46 @@ def delete_product(db: Session, product_id: int) -> None:
         db.delete(product_attribute)
 
     db.delete(product)
+    db.commit()
+
+
+async def add_product_image(db: Session, product_id: int, file: UploadFile) -> ProductImage:
+    product = get_admin_product(db, product_id)
+
+    extension = Path(file.filename or "").suffix.lower()
+    if extension not in ALLOWED_IMAGE_EXTENSIONS:
+        raise InvalidImageError(
+            f"Непідтримуваний формат файлу. Дозволено: {', '.join(sorted(ALLOWED_IMAGE_EXTENSIONS))}"
+        )
+    if file.content_type and not file.content_type.startswith("image/"):
+        raise InvalidImageError("Файл не є зображенням")
+
+    filename = f"{product.slug}-{uuid.uuid4().hex[:8]}{extension}"
+    media_dir = Path(settings.media_dir)
+    media_dir.mkdir(parents=True, exist_ok=True)
+
+    contents = await file.read()
+    with open(media_dir / filename, "wb") as out_file:
+        out_file.write(contents)
+
+    next_position = len(product.images)
+    image = ProductImage(product_id=product_id, url=f"/media/{filename}", position=next_position)
+    db.add(image)
+    db.commit()
+    db.refresh(image)
+    return image
+
+
+def delete_product_image(db: Session, product_id: int, image_id: int) -> None:
+    image = db.scalar(
+        select(ProductImage).where(ProductImage.id == image_id, ProductImage.product_id == product_id)
+    )
+    if image is None:
+        raise ImageNotFoundError()
+
+    file_path = Path(settings.media_dir) / os.path.basename(image.url)
+    if file_path.exists():
+        file_path.unlink()
+
+    db.delete(image)
     db.commit()
