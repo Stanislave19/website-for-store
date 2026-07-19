@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     telegram_bot_token: str = ""
     telegram_chat_ids: str = ""
 
+    nova_poshta_api_key: str = ""
+
     @property
     def telegram_chat_id_list(self) -> list[str]:
         return [chat_id.strip() for chat_id in self.telegram_chat_ids.split(",") if chat_id.strip()]
