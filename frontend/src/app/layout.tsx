@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 
 const fraunces = Fraunces({
@@ -33,9 +32,7 @@ export default function RootLayout({
     <html lang="uk" className={`${fraunces.variable} ${workSans.variable}`}>
       <body suppressHydrationWarning>
         <ToastProvider>
-          <Header />
-          <div className="flex-1">{children}</div>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </ToastProvider>
       </body>
     </html>
