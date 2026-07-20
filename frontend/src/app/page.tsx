@@ -96,7 +96,7 @@ export default async function Home() {
             Дивитись усі →
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+        <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-10">
           {popular.items.map((product) => (
             <ProductCard
               key={product.id}
@@ -140,7 +140,7 @@ export default async function Home() {
 
       <section className="px-6 py-20 md:px-14">
         <h2 className="mb-7 font-serif text-[28px] font-medium text-ink">Нові надходження</h2>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+        <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-10">
           {newArrivals.items.map((product) => (
             <ProductCard
               key={product.id}
