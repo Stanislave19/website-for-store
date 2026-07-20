@@ -131,24 +131,26 @@ export default function AdminOrderDetailPage() {
 
       <div className="mt-6 border border-edge bg-white p-5">
         <h2 className="mb-3 font-serif text-lg font-medium text-ink">Товари</h2>
-        <table className="w-full font-sans text-sm">
-          <thead>
-            <tr className="border-b border-edge text-left text-leather">
-              <th className="py-2 font-normal">Товар</th>
-              <th className="py-2 font-normal">Кількість</th>
-              <th className="py-2 font-normal">Ціна</th>
-            </tr>
-          </thead>
-          <tbody>
-            {order.items.map((item) => (
-              <tr key={item.id} className="border-b border-edge last:border-0">
-                <td className="py-2 text-ink">{item.product_name}</td>
-                <td className="py-2 text-ink">{item.quantity}</td>
-                <td className="py-2 text-racing">{item.price_at_order.toLocaleString("uk-UA")} ₴</td>
+        <div className="overflow-x-auto">
+          <table className="w-full font-sans text-sm">
+            <thead>
+              <tr className="border-b border-edge text-left text-leather">
+                <th className="py-2 font-normal">Товар</th>
+                <th className="py-2 font-normal">Кількість</th>
+                <th className="py-2 font-normal">Ціна</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {order.items.map((item) => (
+                <tr key={item.id} className="border-b border-edge last:border-0">
+                  <td className="py-2 text-ink">{item.product_name}</td>
+                  <td className="py-2 text-ink">{item.quantity}</td>
+                  <td className="py-2 text-racing">{item.price_at_order.toLocaleString("uk-UA")} ₴</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <div className="mt-4 space-y-1 border-t border-edge pt-3 font-sans text-sm">
           <div className="flex justify-between text-leather">
             <span>Сума товарів</span>

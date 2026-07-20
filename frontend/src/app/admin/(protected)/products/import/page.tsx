@@ -92,22 +92,24 @@ export default function AdminProductImportPage() {
                 Помилки — {report.errors.length}{" "}
                 {pluralize(report.errors.length, ["помилка", "помилки", "помилок"])}
               </h3>
-              <table className="w-full font-sans text-sm">
-                <thead>
-                  <tr className="border-b border-edge text-left text-leather">
-                    <th className="py-2 pr-4 font-normal">Рядок</th>
-                    <th className="py-2 font-normal">Повідомлення</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {report.errors.map((rowError, index) => (
-                    <tr key={index} className="border-b border-edge last:border-0">
-                      <td className="py-2 pr-4 text-ink">{rowError.row}</td>
-                      <td className="py-2 text-error">{rowError.message}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full font-sans text-sm">
+                  <thead>
+                    <tr className="border-b border-edge text-left text-leather">
+                      <th className="py-2 pr-4 font-normal">Рядок</th>
+                      <th className="py-2 font-normal">Повідомлення</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {report.errors.map((rowError, index) => (
+                      <tr key={index} className="border-b border-edge last:border-0">
+                        <td className="py-2 pr-4 text-ink">{rowError.row}</td>
+                        <td className="py-2 text-error">{rowError.message}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ) : (
             <p className="font-sans text-sm text-racing">Усі рядки успішно оброблено.</p>
