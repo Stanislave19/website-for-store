@@ -8,6 +8,36 @@ import { ProductActions } from "@/components/product/ProductActions";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { getProductBySlug, getProducts } from "@/lib/api";
+import type { ProductDetail } from "@/types/catalog";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost";
+
+function buildProductJsonLd(product: ProductDetail) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    sku: product.sku,
+    brand: { "@type": "Brand", name: product.brand },
+    image: product.images.map((image) => `${SITE_URL}${image.url}`),
+    description: product.description ?? undefined,
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}/product/${product.slug}`,
+      priceCurrency: "UAH",
+      price: product.price,
+      availability: product.is_active
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+    },
+  };
+}
+
+function jsonLdScriptContent(data: unknown): string {
+  // Екранування "<" не дає рядку в даних (напр. опис товару) розірвати
+  // тег </script> і вставити довільний HTML/JS.
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
 
 const GENDER_LABELS: Record<string, string> = {
   male: "Чоловічі",
@@ -73,6 +103,10 @@ export default async function ProductPage({
 
   return (
     <main className="w-full px-6 py-8 md:px-14">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScriptContent(buildProductJsonLd(product)) }}
+      />
       <nav className="mb-6 font-sans text-[13px] text-leather">
         <Link href="/">Головна</Link>
         <span className="mx-2 text-edge">/</span>
