@@ -121,3 +121,72 @@ export interface CategoryInput {
   name: string;
   parent_id: number | null;
 }
+
+export type OrderStatus = "new" | "processing" | "confirmed" | "shipped" | "completed" | "cancelled";
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  new: "Новий",
+  processing: "У обробці",
+  confirmed: "Підтверджено",
+  shipped: "Відправлено",
+  completed: "Виконано",
+  cancelled: "Скасовано",
+};
+
+export const ORDER_STATUS_OPTIONS: OrderStatus[] = [
+  "new",
+  "processing",
+  "confirmed",
+  "shipped",
+  "completed",
+  "cancelled",
+];
+
+export interface AdminOrderListItem {
+  id: number;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  status: OrderStatus;
+  total: number;
+  created_at: string;
+}
+
+export interface AdminOrderListResponse {
+  items: AdminOrderListItem[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface AdminOrderItem {
+  id: number;
+  product_id: number;
+  product_name: string;
+  quantity: number;
+  price_at_order: number;
+}
+
+export interface AdminOrderDetail {
+  id: number;
+  user_id: number | null;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  city: string;
+  city_ref: string | null;
+  delivery_method: "nova_poshta" | "ukrposhta" | "courier" | "pickup";
+  np_office: string | null;
+  warehouse_ref: string | null;
+  contact_method: "call" | "telegram" | "viber";
+  comment: string | null;
+  status: OrderStatus;
+  promo_code_id: number | null;
+  promo_code: string | null;
+  items_total: number;
+  discount_amount: number;
+  total: number;
+  created_at: string;
+  items: AdminOrderItem[];
+}

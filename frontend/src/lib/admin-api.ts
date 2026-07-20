@@ -1,5 +1,7 @@
 import type {
   AdminCategory,
+  AdminOrderDetail,
+  AdminOrderListResponse,
   AdminProductDetail,
   AdminProductImage,
   AdminProductListResponse,
@@ -13,6 +15,7 @@ import type {
   CategoryInput,
   MechanismTypeInput,
   MechanismTypeOut,
+  OrderStatus,
 } from "@/types/admin";
 
 const API_URL =
@@ -121,6 +124,30 @@ export function uploadAdminProductImage(productId: number, file: File): Promise<
 
 export function deleteAdminProductImage(productId: number, imageId: number): Promise<void> {
   return adminFetch<void>(`/admin/products/${productId}/images/${imageId}`, { method: "DELETE" });
+}
+
+export function listAdminOrders(params: {
+  status?: OrderStatus;
+  page?: number;
+  page_size?: number;
+}): Promise<AdminOrderListResponse> {
+  const query = new URLSearchParams();
+  if (params.status) query.set("status", params.status);
+  if (params.page) query.set("page", String(params.page));
+  if (params.page_size) query.set("page_size", String(params.page_size));
+  const qs = query.toString();
+  return adminFetch<AdminOrderListResponse>(`/admin/orders${qs ? `?${qs}` : ""}`);
+}
+
+export function getAdminOrder(id: number): Promise<AdminOrderDetail> {
+  return adminFetch<AdminOrderDetail>(`/admin/orders/${id}`);
+}
+
+export function updateAdminOrderStatus(id: number, status: OrderStatus): Promise<AdminOrderDetail> {
+  return adminFetch<AdminOrderDetail>(`/admin/orders/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
 }
 
 export function listAdminCategories(): Promise<AdminCategory[]> {
