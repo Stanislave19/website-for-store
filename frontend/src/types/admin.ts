@@ -168,6 +168,28 @@ export interface AdminOrderItem {
   price_at_order: number;
 }
 
+export type DiscountType = "percent" | "fixed";
+
+export interface AdminPromo {
+  id: number;
+  code: string;
+  discount_type: DiscountType;
+  discount_value: number;
+  expires_at: string | null;
+  usage_limit: number | null;
+  usage_count: number;
+  is_active: boolean;
+}
+
+export interface PromoInput {
+  code: string;
+  discount_type: DiscountType;
+  discount_value: number;
+  expires_at: string | null;
+  usage_limit: number | null;
+  is_active: boolean;
+}
+
 export interface AdminOrderDetail {
   id: number;
   user_id: number | null;

@@ -13,9 +13,11 @@ import type {
   BrandInput,
   BrandOut,
   CategoryInput,
+  AdminPromo,
   MechanismTypeInput,
   MechanismTypeOut,
   OrderStatus,
+  PromoInput,
 } from "@/types/admin";
 
 const API_URL =
@@ -124,6 +126,32 @@ export function uploadAdminProductImage(productId: number, file: File): Promise<
 
 export function deleteAdminProductImage(productId: number, imageId: number): Promise<void> {
   return adminFetch<void>(`/admin/products/${productId}/images/${imageId}`, { method: "DELETE" });
+}
+
+export function listAdminPromos(): Promise<AdminPromo[]> {
+  return adminFetch<AdminPromo[]>("/admin/promo-codes");
+}
+
+export function getAdminPromo(id: number): Promise<AdminPromo> {
+  return adminFetch<AdminPromo>(`/admin/promo-codes/${id}`);
+}
+
+export function createAdminPromo(payload: PromoInput): Promise<AdminPromo> {
+  return adminFetch<AdminPromo>("/admin/promo-codes", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateAdminPromo(id: number, payload: Partial<PromoInput>): Promise<AdminPromo> {
+  return adminFetch<AdminPromo>(`/admin/promo-codes/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteAdminPromo(id: number): Promise<void> {
+  return adminFetch<void>(`/admin/promo-codes/${id}`, { method: "DELETE" });
 }
 
 export function listAdminOrders(params: {
