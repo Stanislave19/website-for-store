@@ -81,7 +81,7 @@ export function ProductCard({ id, slug, name, description, price, oldPrice }: Pr
                 actionHref: "/cart",
               });
             }}
-            className="shrink-0 rounded-[3px] bg-racing px-7 py-3.5 font-sans text-sm font-medium whitespace-nowrap text-cream"
+            className="min-h-[44px] shrink-0 rounded-[3px] bg-racing px-7 py-3.5 font-sans text-sm font-medium whitespace-nowrap text-cream"
           >
             Купити
           </button>
