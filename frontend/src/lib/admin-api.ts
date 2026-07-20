@@ -6,6 +6,7 @@ import type {
   AdminProductImage,
   AdminProductListResponse,
   AdminSession,
+  AdminSetting,
   AttributeTypeInput,
   AttributeTypeOut,
   AttributeValueInput,
@@ -126,6 +127,17 @@ export function uploadAdminProductImage(productId: number, file: File): Promise<
 
 export function deleteAdminProductImage(productId: number, imageId: number): Promise<void> {
   return adminFetch<void>(`/admin/products/${productId}/images/${imageId}`, { method: "DELETE" });
+}
+
+export function listAdminSettings(): Promise<AdminSetting[]> {
+  return adminFetch<AdminSetting[]>("/admin/settings");
+}
+
+export function updateAdminSettings(values: Record<string, string>): Promise<AdminSetting[]> {
+  return adminFetch<AdminSetting[]>("/admin/settings", {
+    method: "PATCH",
+    body: JSON.stringify({ settings: values }),
+  });
 }
 
 export function listAdminPromos(): Promise<AdminPromo[]> {

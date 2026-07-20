@@ -168,6 +168,11 @@ export interface AdminOrderItem {
   price_at_order: number;
 }
 
+export interface AdminSetting {
+  key: string;
+  value: string;
+}
+
 export type DiscountType = "percent" | "fixed";
 
 export interface AdminPromo {
