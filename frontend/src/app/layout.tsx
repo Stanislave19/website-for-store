@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 
+import { SearchOverlayProvider } from "@/components/layout/SearchOverlay";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 
@@ -34,7 +35,9 @@ export default function RootLayout({
     <html lang="uk" className={`${fraunces.variable} ${workSans.variable}`}>
       <body suppressHydrationWarning>
         <ToastProvider>
-          <SiteChrome>{children}</SiteChrome>
+          <SearchOverlayProvider>
+            <SiteChrome>{children}</SiteChrome>
+          </SearchOverlayProvider>
         </ToastProvider>
       </body>
     </html>

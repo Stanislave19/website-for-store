@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 
+import { useSearchOverlay } from "./SearchOverlay";
+
 function NavBadge({ count }: { count: number }) {
   if (count === 0) return null;
   return (
@@ -16,17 +18,16 @@ function NavBadge({ count }: { count: number }) {
   );
 }
 
-const NAV_ITEMS = [
-  { href: "/catalog", label: "Каталог", icon: LayoutGrid },
-  { href: "/catalog?search=1", label: "Пошук", icon: Search },
-  { href: "/cart", label: "Кошик", icon: ShoppingCart },
-  { href: "/wishlist", label: "Обране", icon: Heart },
-] as const;
-
 export function BottomNav() {
   const pathname = usePathname();
   const { count: cartCount } = useCart();
   const { count: wishlistCount } = useWishlist();
+  const { openSearch } = useSearchOverlay();
+
+  const itemClassName = (active: boolean) =>
+    `flex flex-1 flex-col items-center gap-1 py-2.5 font-sans text-[11px] ${
+      active ? "text-racing" : "text-leather"
+    }`;
 
   return (
     <nav
@@ -34,27 +35,31 @@ export function BottomNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="flex items-stretch justify-around">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const path = href.split("?")[0];
-          const active = pathname === path;
-          const count = href === "/cart" ? cartCount : href === "/wishlist" ? wishlistCount : 0;
-          return (
-            <Link
-              key={label}
-              href={href}
-              aria-label={label}
-              className={`flex flex-1 flex-col items-center gap-1 py-2.5 font-sans text-[11px] ${
-                active ? "text-racing" : "text-leather"
-              }`}
-            >
-              <span className="relative">
-                <Icon size={22} />
-                <NavBadge count={count} />
-              </span>
-              {label}
-            </Link>
-          );
-        })}
+        <Link href="/catalog" aria-label="Каталог" className={itemClassName(pathname === "/catalog")}>
+          <LayoutGrid size={22} />
+          Каталог
+        </Link>
+
+        <button type="button" aria-label="Пошук" onClick={openSearch} className={itemClassName(false)}>
+          <Search size={22} />
+          Пошук
+        </button>
+
+        <Link href="/cart" aria-label="Кошик" className={itemClassName(pathname === "/cart")}>
+          <span className="relative">
+            <ShoppingCart size={22} />
+            <NavBadge count={cartCount} />
+          </span>
+          Кошик
+        </Link>
+
+        <Link href="/wishlist" aria-label="Обране" className={itemClassName(pathname === "/wishlist")}>
+          <span className="relative">
+            <Heart size={22} />
+            <NavBadge count={wishlistCount} />
+          </span>
+          Обране
+        </Link>
       </div>
     </nav>
   );

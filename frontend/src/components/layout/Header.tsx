@@ -8,6 +8,7 @@ import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 
 import { Logo } from "./Logo";
+import { useSearchOverlay } from "./SearchOverlay";
 
 function CountBadge({ count }: { count: number }) {
   if (count === 0) return null;
@@ -29,6 +30,7 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { count: cartCount } = useCart();
   const { count: wishlistCount } = useWishlist();
+  const { openSearch } = useSearchOverlay();
 
   return (
     <header className="border-b border-edge bg-cream">
@@ -50,9 +52,9 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-[22px] md:flex">
-          <Link href="/catalog" aria-label="Пошук">
+          <button type="button" aria-label="Пошук" onClick={openSearch}>
             <Search size={22} className="text-ink" />
-          </Link>
+          </button>
           <Link href="/wishlist" aria-label="Список бажань" className="relative">
             <Heart size={22} className="text-ink" />
             <CountBadge count={wishlistCount} />
@@ -89,9 +91,16 @@ export function Header() {
             </Link>
           ))}
           <div className="mt-2 flex items-center gap-6">
-            <Link href="/catalog" aria-label="Пошук">
+            <button
+              type="button"
+              aria-label="Пошук"
+              onClick={() => {
+                setMenuOpen(false);
+                openSearch();
+              }}
+            >
               <Search size={22} className="text-ink" />
-            </Link>
+            </button>
             <Link href="/wishlist" aria-label="Список бажань" className="relative">
               <Heart size={22} className="text-ink" />
               <CountBadge count={wishlistCount} />
