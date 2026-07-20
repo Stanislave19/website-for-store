@@ -168,6 +168,18 @@ export interface AdminOrderItem {
   price_at_order: number;
 }
 
+export interface ProductImportRowError {
+  row: number;
+  message: string;
+}
+
+export interface ProductImportReport {
+  total_rows: number;
+  created: number;
+  updated: number;
+  errors: ProductImportRowError[];
+}
+
 export interface AdminSetting {
   key: string;
   value: string;

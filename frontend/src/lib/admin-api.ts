@@ -18,6 +18,7 @@ import type {
   MechanismTypeInput,
   MechanismTypeOut,
   OrderStatus,
+  ProductImportReport,
   PromoInput,
 } from "@/types/admin";
 
@@ -213,6 +214,19 @@ export function updateAdminCategory(
 
 export function deleteAdminCategory(id: number): Promise<void> {
   return adminFetch<void>(`/admin/categories/${id}`, { method: "DELETE" });
+}
+
+export function importAdminProducts(file: File): Promise<ProductImportReport> {
+  const formData = new FormData();
+  formData.append("file", file);
+  return adminFetch<ProductImportReport>("/admin/products/import", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export function getImportTemplateUrl(): string {
+  return `${API_URL}/admin/products/import/template`;
 }
 
 export function getAdminBrands(): Promise<BrandOut[]> {
