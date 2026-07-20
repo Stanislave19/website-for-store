@@ -12,15 +12,10 @@ app = FastAPI(title="Магазин годинників API")
 os.makedirs(settings.media_dir, exist_ok=True)
 app.mount("/media", StaticFiles(directory=settings.media_dir), name="media")
 
-cors_origins = [
-    origin.strip()
-    for origin in os.getenv("BACKEND_CORS_ORIGINS", "").split(",")
-    if origin.strip()
-]
-if cors_origins:
+if settings.cors_origins_list:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=cors_origins,
+        allow_origins=settings.cors_origins_list,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

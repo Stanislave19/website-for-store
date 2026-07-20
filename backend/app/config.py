@@ -23,5 +23,9 @@ class Settings(BaseSettings):
     def telegram_chat_id_list(self) -> list[str]:
         return [chat_id.strip() for chat_id in self.telegram_chat_ids.split(",") if chat_id.strip()]
 
+    @property
+    def cors_origins_list(self) -> list[str]:
+        return [origin.strip() for origin in self.backend_cors_origins.split(",") if origin.strip()]
+
 
 settings = Settings()
