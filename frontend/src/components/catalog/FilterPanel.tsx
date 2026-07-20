@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -140,7 +140,11 @@ export function FilterPanel({ filters, searchParams }: FilterPanelProps) {
         </MoreFilters>
       ) : null}
 
-      <Link href="/catalog" className="w-fit font-sans text-sm text-brass">
+      <Link
+        href="/catalog"
+        className="flex w-fit items-center gap-1.5 font-sans text-sm font-medium text-sale"
+      >
+        <RotateCcw size={14} />
         Скинути
       </Link>
     </aside>
