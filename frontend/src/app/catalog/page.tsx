@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getCategories, getFilters, getProducts } from "@/lib/api";
 import { ActiveFilters } from "@/components/catalog/ActiveFilters";
 import { FilterPanel } from "@/components/catalog/FilterPanel";
+import { MobileFilterSheet } from "@/components/catalog/MobileFilterSheet";
 import { Pagination } from "@/components/catalog/Pagination";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { SortDropdown } from "@/components/catalog/SortDropdown";
@@ -147,14 +148,9 @@ export default async function CatalogPage({
         </span>
       </div>
 
-      <details className="mb-6 lg:hidden">
-        <summary className="cursor-pointer rounded-[3px] border border-edge px-4 py-3 font-sans text-sm text-ink">
-          Фільтри
-        </summary>
-        <div className="mt-4">
-          <FilterPanel filters={filters} searchParams={params} />
-        </div>
-      </details>
+      <MobileFilterSheet>
+        <FilterPanel filters={filters} searchParams={params} />
+      </MobileFilterSheet>
 
       <div className="flex flex-col gap-10 lg:flex-row">
         <div className="hidden lg:block">
