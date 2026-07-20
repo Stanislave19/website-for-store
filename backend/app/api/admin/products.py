@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_staff_user
@@ -12,7 +13,12 @@ from app.schemas.admin_product import (
     ProductCreateRequest,
     ProductUpdateRequest,
 )
-from app.services.admin_import_service import ImportFileError, import_products, parse_import_file
+from app.services.admin_import_service import (
+    ImportFileError,
+    build_import_template_csv,
+    import_products,
+    parse_import_file,
+)
 from app.services.admin_product_service import (
     ImageNotFoundError,
     InvalidImageError,
@@ -72,6 +78,16 @@ def create_admin_product(payload: ProductCreateRequest, db: Session = Depends(ge
     except SkuAlreadyExistsError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     return to_admin_product_detail(db, product)
+
+
+@router.get("/admin/products/import/template")
+def download_admin_import_template(db: Session = Depends(get_db)):
+    csv_content = build_import_template_csv(db)
+    return PlainTextResponse(
+        csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=import-template.csv"},
+    )
 
 
 @router.post("/admin/products/import", response_model=ProductImportReport)

@@ -33,10 +33,11 @@ IMAGE_CONTENT_TYPE_EXTENSIONS = {
     "image/webp": ".webp",
 }
 
-# Фіксовані колонки товару. Будь-яка інша колонка з заголовком, що збігається
-# з назвою наявного attribute_type, трактується як атрибут (EAV) — жодних змін
-# коду не потрібно при додаванні нового типу атрибута в адмінці.
-FIXED_COLUMNS = {
+# Фіксовані колонки товару, в порядку для шаблону. Будь-яка інша колонка
+# з заголовком, що збігається з назвою наявного attribute_type, трактується
+# як атрибут (EAV) — жодних змін коду не потрібно при додаванні нового типу
+# атрибута в адмінці.
+FIXED_COLUMNS_ORDER = (
     "Назва",
     "Опис",
     "Ціна",
@@ -52,6 +53,25 @@ FIXED_COLUMNS = {
     "Комплектація",
     "Активний",
     "Фото",
+)
+FIXED_COLUMNS = set(FIXED_COLUMNS_ORDER)
+
+TEMPLATE_EXAMPLE_ROW = {
+    "Назва": "Casio Heritage MTP-1234",
+    "Опис": "Класичний чоловічий годинник",
+    "Ціна": "2400",
+    "Стара_ціна": "",
+    "Артикул": "CAS-MTP-1234",
+    "Категорія": "Класичні",
+    "Бренд": "Casio",
+    "Тип_механізму": "Кварц",
+    "Стать": "Чоловічі",
+    "Діаметр_мм": "40",
+    "Товщина_мм": "",
+    "Гарантія_міс": "24",
+    "Комплектація": "Коробка, гарантійний талон",
+    "Активний": "так",
+    "Фото": "https://example.com/photo1.jpg;https://example.com/photo2.jpg",
 }
 
 GENDER_LABELS = {
@@ -405,3 +425,17 @@ def import_products(db: Session, rows: list[dict[str, str]]) -> ProductImportRep
             created += 1
 
     return ProductImportReport(total_rows=len(rows), created=created, updated=updated, errors=errors)
+
+
+def build_import_template_csv(db: Session) -> str:
+    attribute_types = db.execute(select(AttributeType).order_by(AttributeType.name)).scalars().all()
+    headers = list(FIXED_COLUMNS_ORDER) + [attribute_type.name for attribute_type in attribute_types]
+
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=headers)
+    writer.writeheader()
+    example_row = dict(TEMPLATE_EXAMPLE_ROW)
+    for attribute_type in attribute_types:
+        example_row.setdefault(attribute_type.name, "")
+    writer.writerow(example_row)
+    return "﻿" + buffer.getvalue()
