@@ -159,3 +159,11 @@ def get_numeric_ranges(
     diameter_range = (int(diameter_min or 0), int(diameter_max or 0))
     thickness_range = (int(thickness_min or 0), int(thickness_max or 0))
     return price_range, diameter_range, thickness_range
+
+
+def get_on_sale_count(db: Session) -> int:
+    return db.execute(
+        select(func.count(Product.id)).where(
+            Product.is_active.is_(True), Product.old_price.is_not(None)
+        )
+    ).scalar_one()

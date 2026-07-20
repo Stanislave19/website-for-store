@@ -80,6 +80,8 @@ export interface FiltersResponse {
   categorical: FilterGroup[];
   price: NumericRange;
   diameter: NumericRange;
+  thickness: NumericRange;
+  on_sale_count: number;
 }
 
 export type SortOption = "newest" | "price_asc" | "price_desc";
@@ -104,6 +106,7 @@ export interface ProductListParams {
   diameter_max?: number;
   attribute_value_ids?: number[];
   search?: string;
+  on_sale?: boolean;
   sort?: SortOption;
   page?: number;
   page_size?: number;

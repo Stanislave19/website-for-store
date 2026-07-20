@@ -4,7 +4,12 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.category import CategoryNode
 from app.schemas.filters import FiltersResponse, NumericRange
-from app.services.catalog_service import get_categorical_filters, get_category_tree, get_numeric_ranges
+from app.services.catalog_service import (
+    get_categorical_filters,
+    get_category_tree,
+    get_numeric_ranges,
+    get_on_sale_count,
+)
 
 router = APIRouter()
 
@@ -23,4 +28,5 @@ def read_filters(db: Session = Depends(get_db)):
         price=NumericRange(min=price_range[0], max=price_range[1]),
         diameter=NumericRange(min=diameter_range[0], max=diameter_range[1]),
         thickness=NumericRange(min=thickness_range[0], max=thickness_range[1]),
+        on_sale_count=get_on_sale_count(db),
     )

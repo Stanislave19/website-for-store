@@ -2,10 +2,11 @@ import Link from "next/link";
 
 import type { FiltersResponse } from "@/types/catalog";
 import type { CatalogSearchParams } from "@/lib/catalog-query";
-import { getParam, getParamList, toggleMultiHref, toggleSingleHref } from "@/lib/catalog-query";
+import { getParam, getParamList, hrefWithParam, toggleMultiHref, toggleSingleHref } from "@/lib/catalog-query";
 
 import { FilterTag } from "./FilterTag";
 import { MoreFilters } from "./MoreFilters";
+import { OnSaleFilter } from "./OnSaleFilter";
 import { PriceFilter } from "./PriceFilter";
 
 interface FilterPanelProps {
@@ -64,6 +65,15 @@ export function FilterPanel({ filters, searchParams }: FilterPanelProps) {
           key={`${getParam(searchParams, "price_min") ?? ""}-${getParam(searchParams, "price_max") ?? ""}`}
           min={filters.price.min}
           max={filters.price.max}
+        />
+        <OnSaleFilter
+          href={hrefWithParam(
+            searchParams,
+            "on_sale",
+            getParam(searchParams, "on_sale") === "true" ? undefined : "true",
+          )}
+          active={getParam(searchParams, "on_sale") === "true"}
+          count={filters.on_sale_count}
         />
       </div>
 

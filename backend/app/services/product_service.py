@@ -63,11 +63,15 @@ def list_products(
     thickness_max: int | None = None,
     attribute_value_ids: list[int] | None = None,
     search: str | None = None,
+    on_sale: bool = False,
     sort: str = "newest",
     page: int = 1,
     page_size: int = 24,
 ) -> tuple[list[Product], int]:
     query = select(Product).where(Product.is_active.is_(True))
+
+    if on_sale:
+        query = query.where(Product.old_price.is_not(None))
 
     if category_id is not None:
         category_ids = get_descendant_category_ids(db, category_id)

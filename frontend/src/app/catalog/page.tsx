@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { getFilters, getProducts } from "@/lib/api";
+import { ActiveFilters } from "@/components/catalog/ActiveFilters";
 import { FilterPanel } from "@/components/catalog/FilterPanel";
 import { Pagination } from "@/components/catalog/Pagination";
 import { ProductCard } from "@/components/catalog/ProductCard";
@@ -41,6 +42,7 @@ export default async function CatalogPage({
     .map(Number)
     .filter(Number.isFinite);
   const search = getParam(params, "search");
+  const onSale = getParam(params, "on_sale") === "true";
   const sortParam = getParam(params, "sort");
   const sort = SORT_VALUES.includes(sortParam as SortOption) ? (sortParam as SortOption) : "newest";
   const page = toNumber(getParam(params, "page")) ?? 1;
@@ -55,6 +57,7 @@ export default async function CatalogPage({
       price_max: priceMax,
       attribute_value_ids: attributeValueIds,
       search,
+      on_sale: onSale || undefined,
       sort,
       page,
     }),
@@ -86,6 +89,8 @@ export default async function CatalogPage({
         </div>
 
         <div className="flex-1">
+          <ActiveFilters filters={filters} searchParams={params} />
+
           <div className="mb-6 flex justify-end">
             <SortDropdown />
           </div>

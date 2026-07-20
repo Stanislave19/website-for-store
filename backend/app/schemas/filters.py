@@ -23,3 +23,4 @@ class FiltersResponse(BaseModel):
     price: NumericRange
     diameter: NumericRange
     thickness: NumericRange
+    on_sale_count: int

@@ -77,6 +77,14 @@ export function hrefWithParam(
   return `/catalog${qs ? `?${qs}` : ""}`;
 }
 
+export function hrefWithoutParams(params: CatalogSearchParams, keys: string[]): string {
+  const query = toSearchParams(params);
+  query.delete("page");
+  for (const key of keys) query.delete(key);
+  const qs = query.toString();
+  return `/catalog${qs ? `?${qs}` : ""}`;
+}
+
 export function hrefWithPage(params: CatalogSearchParams, page: number): string {
   const query = toSearchParams(params);
   query.set("page", String(page));
