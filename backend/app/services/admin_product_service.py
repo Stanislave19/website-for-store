@@ -94,6 +94,10 @@ def admin_products_pages(total: int, page_size: int) -> int:
     return math.ceil(total / page_size) if page_size else 0
 
 
+def get_product_by_sku(db: Session, sku: str) -> Product | None:
+    return db.scalar(select(Product).where(Product.sku == sku).options(selectinload(Product.images)))
+
+
 def get_admin_product(db: Session, product_id: int) -> Product:
     product = db.execute(
         select(Product).where(Product.id == product_id).options(selectinload(Product.images))
@@ -223,6 +227,22 @@ def delete_product(db: Session, product_id: int) -> None:
     db.commit()
 
 
+def add_product_image_from_bytes(db: Session, product: Product, extension: str, content: bytes) -> ProductImage:
+    filename = f"{product.slug}-{uuid.uuid4().hex[:8]}{extension}"
+    media_dir = Path(settings.media_dir)
+    media_dir.mkdir(parents=True, exist_ok=True)
+
+    with open(media_dir / filename, "wb") as out_file:
+        out_file.write(content)
+
+    next_position = len(product.images)
+    image = ProductImage(product_id=product.id, url=f"/media/{filename}", position=next_position)
+    db.add(image)
+    db.commit()
+    db.refresh(image)
+    return image
+
+
 async def add_product_image(db: Session, product_id: int, file: UploadFile) -> ProductImage:
     product = get_admin_product(db, product_id)
 
@@ -234,20 +254,8 @@ async def add_product_image(db: Session, product_id: int, file: UploadFile) -> P
     if file.content_type and not file.content_type.startswith("image/"):
         raise InvalidImageError("Файл не є зображенням")
 
-    filename = f"{product.slug}-{uuid.uuid4().hex[:8]}{extension}"
-    media_dir = Path(settings.media_dir)
-    media_dir.mkdir(parents=True, exist_ok=True)
-
     contents = await file.read()
-    with open(media_dir / filename, "wb") as out_file:
-        out_file.write(contents)
-
-    next_position = len(product.images)
-    image = ProductImage(product_id=product_id, url=f"/media/{filename}", position=next_position)
-    db.add(image)
-    db.commit()
-    db.refresh(image)
-    return image
+    return add_product_image_from_bytes(db, product, extension, contents)
 
 
 def delete_product_image(db: Session, product_id: int, image_id: int) -> None:

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_staff_user
 from app.database import get_db
+from app.schemas.admin_import import ProductImportReport
 from app.schemas.admin_product import (
     AdminProductDetail,
     AdminProductImageOut,
@@ -11,6 +12,7 @@ from app.schemas.admin_product import (
     ProductCreateRequest,
     ProductUpdateRequest,
 )
+from app.services.admin_import_service import ImportFileError, import_products, parse_import_file
 from app.services.admin_product_service import (
     ImageNotFoundError,
     InvalidImageError,
@@ -70,6 +72,16 @@ def create_admin_product(payload: ProductCreateRequest, db: Session = Depends(ge
     except SkuAlreadyExistsError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     return to_admin_product_detail(db, product)
+
+
+@router.post("/admin/products/import", response_model=ProductImportReport)
+async def import_admin_products(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    content = await file.read()
+    try:
+        rows = parse_import_file(file.filename or "", content)
+    except ImportFileError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return import_products(db, rows)
 
 
 @router.get("/admin/products/{product_id}", response_model=AdminProductDetail)
