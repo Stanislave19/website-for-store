@@ -183,6 +183,7 @@ export default async function CatalogPage({
                   price={product.price}
                   oldPrice={product.old_price}
                   brand={product.brand}
+                  mainImage={product.main_image}
                 />
               ))}
             </div>

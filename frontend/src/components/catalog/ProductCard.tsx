@@ -1,13 +1,13 @@
 "use client";
 
-import { Heart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useToast } from "@/components/ui/ToastProvider";
 
-import { PlaceholderImage } from "./PlaceholderImage";
+import { ProductImageHover } from "./ProductImageHover";
 
 export interface ProductCardProps {
   id: number;
@@ -17,13 +17,22 @@ export interface ProductCardProps {
   price: number;
   oldPrice: number | null;
   brand?: string;
+  mainImage?: string | null;
 }
 
 function formatPrice(value: number): string {
   return `${Math.round(value).toLocaleString("uk-UA")} ₴`;
 }
 
-export function ProductCard({ id, slug, name, description, price, oldPrice }: ProductCardProps) {
+export function ProductCard({
+  id,
+  slug,
+  name,
+  description,
+  price,
+  oldPrice,
+  mainImage,
+}: ProductCardProps) {
   const { toggle, isWishlisted } = useWishlist();
   const { addItem } = useCart();
   const { showToast } = useToast();
@@ -33,7 +42,7 @@ export function ProductCard({ id, slug, name, description, price, oldPrice }: Pr
   return (
     <div className="group flex h-full flex-col border border-edge bg-white transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:border-brass hover:shadow-[0_20px_32px_-16px_rgba(20,54,31,0.28)]">
       <Link href={`/product/${slug}`} className="relative block w-full">
-        <PlaceholderImage />
+        <ProductImageHover images={mainImage ? [mainImage] : []} />
         <button
           type="button"
           aria-label={inWishlist ? "Прибрати з обраного" : "Додати в обране"}
@@ -47,20 +56,26 @@ export function ProductCard({ id, slug, name, description, price, oldPrice }: Pr
         </button>
       </Link>
 
-      <div className="flex flex-1 flex-col gap-3 p-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-6">
         <Link href={`/product/${slug}`}>
           <h3 className="line-clamp-2 min-h-[2.6em] font-serif text-[27px] leading-[1.3] font-medium text-ink">
             {name}
           </h3>
         </Link>
-        <p className="line-clamp-2 min-h-[2.6em] font-sans text-[15px] leading-snug text-leather">
+        {/*
+          SEO: текст опису лишається в DOM завжди (не display:none/hidden),
+          щоб пошукові системи бачили контент сторінки категорії.
+          Візуально ховаємо через opacity/max-h і показуємо лише при
+          наведенні на desktop — на мобільному (немає hover) прихований завжди.
+        */}
+        <p className="hidden max-h-0 overflow-hidden font-sans text-[15px] leading-snug text-leather opacity-0 transition-all duration-200 ease-out group-hover:max-h-[3em] group-hover:opacity-100 lg:block">
           {description ?? ""}
         </p>
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-4">
-          <div className="flex flex-wrap items-baseline gap-x-2 whitespace-nowrap">
+        <div className="mt-auto flex min-w-0 items-center justify-between gap-3 pt-4">
+          <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
             <span
-              className={`font-sans text-[22px] font-medium ${hasDiscount ? "text-sale" : "text-racing"}`}
+              className={`font-sans text-[18px] font-medium sm:text-[22px] ${hasDiscount ? "text-sale" : "text-racing"}`}
             >
               {formatPrice(price)}
             </span>
@@ -73,6 +88,7 @@ export function ProductCard({ id, slug, name, description, price, oldPrice }: Pr
 
           <button
             type="button"
+            aria-label="Додати в кошик"
             onClick={() => {
               addItem(id, slug);
               showToast({
@@ -81,9 +97,9 @@ export function ProductCard({ id, slug, name, description, price, oldPrice }: Pr
                 actionHref: "/cart",
               });
             }}
-            className="min-h-[44px] shrink-0 rounded-[3px] bg-racing px-7 py-3.5 font-sans text-sm font-medium whitespace-nowrap text-cream"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[3px] bg-racing text-cream"
           >
-            Купити
+            <ShoppingCart size={18} />
           </button>
         </div>
       </div>

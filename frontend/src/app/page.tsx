@@ -107,6 +107,7 @@ export default async function Home() {
               price={product.price}
               oldPrice={product.old_price}
               brand={product.brand}
+              mainImage={product.main_image}
             />
           ))}
         </div>
@@ -151,6 +152,7 @@ export default async function Home() {
               price={product.price}
               oldPrice={product.old_price}
               brand={product.brand}
+              mainImage={product.main_image}
             />
           ))}
         </div>

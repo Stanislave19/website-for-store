@@ -82,6 +82,7 @@ export default function WishlistPage() {
             price={product.price}
             oldPrice={product.old_price}
             brand={product.brand}
+            mainImage={product.images[0]?.url ?? null}
           />
         ))}
       </div>
