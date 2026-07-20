@@ -1,0 +1,2 @@
+# Shell-скрипти виконуються на Linux-сервері — CRLF (Windows-конвертація) зламає shebang.
+*.sh text eol=lf

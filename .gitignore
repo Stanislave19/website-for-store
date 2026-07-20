@@ -20,6 +20,9 @@ npm-debug.log*
 # Медіа (завантажені фото товарів)
 backend/media/
 
+# Резервні копії бази (створюються scripts/backup-db.sh)
+backups/
+
 # Claude Code (локальні особисті налаштування)
 .claude/settings.local.json
 
