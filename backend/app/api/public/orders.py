@@ -1,9 +1,7 @@
-import time
-from collections import defaultdict
-
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.rate_limit import make_rate_limiter
 from app.database import get_db
 from app.schemas.order import OrderCreateRequest, OrderCreateResponse
 from app.services.order_service import (
@@ -20,23 +18,9 @@ from app.services.telegram_service import (
 
 router = APIRouter()
 
-# Проста абонована захист від спаму заявок: не більше RATE_LIMIT_MAX запитів
-# з одного IP за RATE_LIMIT_WINDOW_SECONDS. Зберігається в пам'яті процесу —
-# для MVP з одним backend-контейнером цього достатньо. Якщо колись буде
-# кілька інстансів backend, треба винести в Redis (спільний для всіх).
-RATE_LIMIT_MAX = 5
-RATE_LIMIT_WINDOW_SECONDS = 60
-_request_log: dict[str, list[float]] = defaultdict(list)
-
-
-def rate_limit(request: Request) -> None:
-    ip = request.client.host if request.client else "unknown"
-    now = time.monotonic()
-    recent = [t for t in _request_log[ip] if now - t < RATE_LIMIT_WINDOW_SECONDS]
-    if len(recent) >= RATE_LIMIT_MAX:
-        raise HTTPException(status_code=429, detail="Забагато заявок. Спробуйте пізніше.")
-    recent.append(now)
-    _request_log[ip] = recent
+rate_limit = make_rate_limiter(
+    max_requests=5, window_seconds=60, message="Забагато заявок. Спробуйте пізніше."
+)
 
 
 @router.post(
