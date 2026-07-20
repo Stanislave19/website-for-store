@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getCategories, getFilters, getProducts } from "@/lib/api";
 import { ActiveFilters } from "@/components/catalog/ActiveFilters";
 import { FilterPanel } from "@/components/catalog/FilterPanel";
+import { MobileCategorySheet } from "@/components/catalog/MobileCategorySheet";
 import { MobileFilterSheet } from "@/components/catalog/MobileFilterSheet";
 import { Pagination } from "@/components/catalog/Pagination";
 import { ProductCard } from "@/components/catalog/ProductCard";
@@ -121,7 +122,7 @@ export default async function CatalogPage({
   const sort = SORT_VALUES.includes(sortParam as SortOption) ? (sortParam as SortOption) : "newest";
   const page = toNumber(getParam(params, "page")) ?? 1;
 
-  const [productsResponse, filters] = await Promise.all([
+  const [productsResponse, filters, categories] = await Promise.all([
     getProducts({
       category,
       brand,
@@ -136,6 +137,7 @@ export default async function CatalogPage({
       page,
     }),
     getFilters(),
+    getCategories(),
   ]);
 
   return (
@@ -148,9 +150,12 @@ export default async function CatalogPage({
         </span>
       </div>
 
-      <MobileFilterSheet>
-        <FilterPanel filters={filters} searchParams={params} />
-      </MobileFilterSheet>
+      <div className="mb-6 flex gap-3 lg:hidden">
+        <MobileFilterSheet>
+          <FilterPanel filters={filters} searchParams={params} />
+        </MobileFilterSheet>
+        <MobileCategorySheet categories={categories} />
+      </div>
 
       <div className="flex flex-col gap-10 lg:flex-row">
         <div className="hidden lg:block">
