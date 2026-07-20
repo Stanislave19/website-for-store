@@ -39,7 +39,7 @@ function FilterGroupBlock({
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between font-serif text-[15px] font-medium text-ink"
+        className="flex w-full items-center justify-between font-sans text-[15px] font-semibold text-ink"
       >
         <span>{title}</span>
         {open ? (

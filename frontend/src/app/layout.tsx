@@ -14,7 +14,8 @@ const fraunces = Fraunces({
 const workSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500"],
+  // 600 — виняток лише для заголовків груп фільтрів (службовий UI, не контент)
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
