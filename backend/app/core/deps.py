@@ -22,3 +22,9 @@ def get_current_staff_user(request: Request, db: Session = Depends(get_db)) -> U
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Немає доступу")
 
     return user
+
+
+def get_current_owner_user(user: User = Depends(get_current_staff_user)) -> User:
+    if user.role != UserRole.owner:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Доступно лише власнику")
+    return user
