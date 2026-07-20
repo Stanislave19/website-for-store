@@ -4,8 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.product import ProductDetail, ProductListItem, ProductListResponse
-from app.services.product_service import get_product_attributes, get_product_by_slug, list_products
+from app.schemas.product import ProductDetail, ProductListItem, ProductListResponse, ProductSitemapItem
+from app.services.product_service import (
+    get_product_attributes,
+    get_product_by_slug,
+    list_active_product_slugs,
+    list_products,
+)
 
 router = APIRouter()
 
@@ -71,6 +76,11 @@ def read_products(
         page_size=page_size,
         pages=math.ceil(total / page_size) if page_size else 0,
     )
+
+
+@router.get("/products/sitemap", response_model=list[ProductSitemapItem])
+def read_products_sitemap(db: Session = Depends(get_db)):
+    return list_active_product_slugs(db)
 
 
 @router.get("/products/{slug}", response_model=ProductDetail)

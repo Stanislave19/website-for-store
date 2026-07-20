@@ -118,6 +118,12 @@ def list_products(
     return items, total
 
 
+def list_active_product_slugs(db: Session) -> list[Product]:
+    return db.execute(
+        select(Product).where(Product.is_active.is_(True)).order_by(Product.id)
+    ).scalars().all()
+
+
 def get_product_by_slug(db: Session, slug: str) -> Product | None:
     query = (
         select(Product)

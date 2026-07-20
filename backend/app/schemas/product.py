@@ -26,6 +26,12 @@ class ProductListItem(BaseModel):
     main_image: str | None
 
 
+class ProductSitemapItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    slug: str
+
+
 class ProductListResponse(BaseModel):
     items: list[ProductListItem]
     total: int

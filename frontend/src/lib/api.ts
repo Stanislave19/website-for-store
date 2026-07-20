@@ -46,6 +46,10 @@ export function getProductBySlug(slug: string): Promise<ProductDetail> {
   return apiFetch<ProductDetail>(`/products/${slug}`);
 }
 
+export function getProductSlugs(): Promise<{ slug: string }[]> {
+  return apiFetch<{ slug: string }[]>("/products/sitemap");
+}
+
 export function getCategories(): Promise<CategoryNode[]> {
   return apiFetch<CategoryNode[]>("/categories");
 }
