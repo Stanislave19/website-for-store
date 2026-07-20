@@ -56,12 +56,20 @@ export default function AdminProductsPage() {
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="font-serif text-2xl font-medium text-ink">Товари ({total})</h1>
-        <Link
-          href="/admin/products/new"
-          className="rounded-[3px] bg-racing px-5 py-2.5 font-sans text-sm font-medium text-cream"
-        >
-          + Додати товар
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/products/import"
+            className="rounded-[3px] border border-edge px-5 py-2.5 font-sans text-sm font-medium text-ink hover:border-brass"
+          >
+            Імпорт
+          </Link>
+          <Link
+            href="/admin/products/new"
+            className="rounded-[3px] bg-racing px-5 py-2.5 font-sans text-sm font-medium text-cream"
+          >
+            + Додати товар
+          </Link>
+        </div>
       </div>
 
       <form
