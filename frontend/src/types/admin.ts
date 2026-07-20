@@ -76,8 +76,16 @@ export interface BrandOut {
   name: string;
 }
 
+export interface BrandInput {
+  name: string;
+}
+
 export interface MechanismTypeOut {
   id: number;
+  name: string;
+}
+
+export interface MechanismTypeInput {
   name: string;
 }
 
@@ -86,8 +94,17 @@ export interface AttributeTypeOut {
   name: string;
 }
 
+export interface AttributeTypeInput {
+  name: string;
+}
+
 export interface AttributeValueOut {
   id: number;
+  attribute_type_id: number;
+  value: string;
+}
+
+export interface AttributeValueInput {
   attribute_type_id: number;
   value: string;
 }

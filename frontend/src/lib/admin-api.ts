@@ -3,9 +3,13 @@ import type {
   AdminProductImage,
   AdminProductListResponse,
   AdminSession,
+  AttributeTypeInput,
   AttributeTypeOut,
+  AttributeValueInput,
   AttributeValueOut,
+  BrandInput,
   BrandOut,
+  MechanismTypeInput,
   MechanismTypeOut,
 } from "@/types/admin";
 
@@ -121,14 +125,93 @@ export function getAdminBrands(): Promise<BrandOut[]> {
   return adminFetch<BrandOut[]>("/admin/brands");
 }
 
+export function createAdminBrand(payload: BrandInput): Promise<BrandOut> {
+  return adminFetch<BrandOut>("/admin/brands", { method: "POST", body: JSON.stringify(payload) });
+}
+
+export function updateAdminBrand(id: number, payload: BrandInput): Promise<BrandOut> {
+  return adminFetch<BrandOut>(`/admin/brands/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteAdminBrand(id: number): Promise<void> {
+  return adminFetch<void>(`/admin/brands/${id}`, { method: "DELETE" });
+}
+
 export function getAdminMechanismTypes(): Promise<MechanismTypeOut[]> {
   return adminFetch<MechanismTypeOut[]>("/admin/mechanism-types");
+}
+
+export function createAdminMechanismType(payload: MechanismTypeInput): Promise<MechanismTypeOut> {
+  return adminFetch<MechanismTypeOut>("/admin/mechanism-types", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateAdminMechanismType(
+  id: number,
+  payload: MechanismTypeInput,
+): Promise<MechanismTypeOut> {
+  return adminFetch<MechanismTypeOut>(`/admin/mechanism-types/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteAdminMechanismType(id: number): Promise<void> {
+  return adminFetch<void>(`/admin/mechanism-types/${id}`, { method: "DELETE" });
 }
 
 export function getAdminAttributeTypes(): Promise<AttributeTypeOut[]> {
   return adminFetch<AttributeTypeOut[]>("/admin/attribute-types");
 }
 
-export function getAdminAttributeValues(): Promise<AttributeValueOut[]> {
-  return adminFetch<AttributeValueOut[]>("/admin/attribute-values");
+export function createAdminAttributeType(payload: AttributeTypeInput): Promise<AttributeTypeOut> {
+  return adminFetch<AttributeTypeOut>("/admin/attribute-types", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateAdminAttributeType(
+  id: number,
+  payload: AttributeTypeInput,
+): Promise<AttributeTypeOut> {
+  return adminFetch<AttributeTypeOut>(`/admin/attribute-types/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteAdminAttributeType(id: number): Promise<void> {
+  return adminFetch<void>(`/admin/attribute-types/${id}`, { method: "DELETE" });
+}
+
+export function getAdminAttributeValues(attributeTypeId?: number): Promise<AttributeValueOut[]> {
+  const qs = attributeTypeId ? `?attribute_type_id=${attributeTypeId}` : "";
+  return adminFetch<AttributeValueOut[]>(`/admin/attribute-values${qs}`);
+}
+
+export function createAdminAttributeValue(payload: AttributeValueInput): Promise<AttributeValueOut> {
+  return adminFetch<AttributeValueOut>("/admin/attribute-values", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateAdminAttributeValue(
+  id: number,
+  payload: Partial<AttributeValueInput>,
+): Promise<AttributeValueOut> {
+  return adminFetch<AttributeValueOut>(`/admin/attribute-values/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteAdminAttributeValue(id: number): Promise<void> {
+  return adminFetch<void>(`/admin/attribute-values/${id}`, { method: "DELETE" });
 }
