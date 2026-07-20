@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { deleteAdminProduct, listAdminProducts, AdminApiError } from "@/lib/admin-api";
+import { pluralize } from "@/lib/pluralize";
 import type { AdminProductListItem } from "@/types/admin";
 
 export default function AdminProductsPage() {
@@ -55,7 +56,9 @@ export default function AdminProductsPage() {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-serif text-2xl font-medium text-ink">Товари ({total})</h1>
+        <h1 className="font-serif text-2xl font-medium text-ink">
+          Товари — {total} {pluralize(total, ["товар", "товари", "товарів"])}
+        </h1>
         <div className="flex gap-3">
           <Link
             href="/admin/products/import"

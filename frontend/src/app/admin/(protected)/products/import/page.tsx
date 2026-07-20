@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { FileInput } from "@/components/admin/FileInput";
 import { AdminApiError, getImportTemplateUrl, importAdminProducts } from "@/lib/admin-api";
+import { pluralize } from "@/lib/pluralize";
 import type { ProductImportReport } from "@/types/admin";
 
 export default function AdminProductImportPage() {
@@ -88,7 +89,8 @@ export default function AdminProductImportPage() {
           {report.errors.length > 0 ? (
             <div>
               <h3 className="mb-2 font-sans text-sm font-medium text-error">
-                Помилки ({report.errors.length})
+                Помилки — {report.errors.length}{" "}
+                {pluralize(report.errors.length, ["помилка", "помилки", "помилок"])}
               </h3>
               <table className="w-full font-sans text-sm">
                 <thead>

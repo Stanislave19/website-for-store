@@ -27,6 +27,7 @@ export default function CartPage() {
   } = usePromoCode(itemsTotal);
 
   const total = Math.max(0, itemsTotal - discountAmount);
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
   if (!loading && items.length === 0) {
     return (
@@ -177,7 +178,7 @@ export default function CartPage() {
             <div className="border-t border-edge pt-4">
               <div className="flex justify-between py-1.5 font-sans text-sm">
                 <span className="text-leather">
-                  Товари ({items.reduce((sum, item) => sum + item.quantity, 0)})
+                  {totalQuantity} {pluralize(totalQuantity, ["товар", "товари", "товарів"])}
                 </span>
                 <span className="text-ink">{formatPrice(itemsTotal)}</span>
               </div>

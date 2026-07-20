@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { listAdminOrders } from "@/lib/admin-api";
+import { pluralize } from "@/lib/pluralize";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_OPTIONS } from "@/types/admin";
 import type { AdminOrderListItem, OrderStatus } from "@/types/admin";
 
@@ -37,7 +38,9 @@ export default function AdminOrdersPage() {
 
   return (
     <div>
-      <h1 className="mb-6 font-serif text-2xl font-medium text-ink">Замовлення ({total})</h1>
+      <h1 className="mb-6 font-serif text-2xl font-medium text-ink">
+        Замовлення — {total} {pluralize(total, ["замовлення", "замовлення", "замовлень"])}
+      </h1>
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <label className="font-sans text-[13px] text-leather">Статус:</label>
