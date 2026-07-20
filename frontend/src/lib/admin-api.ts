@@ -1,4 +1,5 @@
 import type {
+  AdminCategory,
   AdminProductDetail,
   AdminProductImage,
   AdminProductListResponse,
@@ -9,6 +10,7 @@ import type {
   AttributeValueOut,
   BrandInput,
   BrandOut,
+  CategoryInput,
   MechanismTypeInput,
   MechanismTypeOut,
 } from "@/types/admin";
@@ -119,6 +121,31 @@ export function uploadAdminProductImage(productId: number, file: File): Promise<
 
 export function deleteAdminProductImage(productId: number, imageId: number): Promise<void> {
   return adminFetch<void>(`/admin/products/${productId}/images/${imageId}`, { method: "DELETE" });
+}
+
+export function listAdminCategories(): Promise<AdminCategory[]> {
+  return adminFetch<AdminCategory[]>("/admin/categories");
+}
+
+export function createAdminCategory(payload: CategoryInput): Promise<AdminCategory> {
+  return adminFetch<AdminCategory>("/admin/categories", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateAdminCategory(
+  id: number,
+  payload: Partial<CategoryInput>,
+): Promise<AdminCategory> {
+  return adminFetch<AdminCategory>(`/admin/categories/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteAdminCategory(id: number): Promise<void> {
+  return adminFetch<void>(`/admin/categories/${id}`, { method: "DELETE" });
 }
 
 export function getAdminBrands(): Promise<BrandOut[]> {

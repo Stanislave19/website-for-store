@@ -108,3 +108,16 @@ export interface AttributeValueInput {
   attribute_type_id: number;
   value: string;
 }
+
+export interface AdminCategory {
+  id: number;
+  name: string;
+  slug: string;
+  parent_id: number | null;
+  created_at: string;
+}
+
+export interface CategoryInput {
+  name: string;
+  parent_id: number | null;
+}
