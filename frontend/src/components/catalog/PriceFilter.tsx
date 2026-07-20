@@ -29,27 +29,37 @@ export function PriceFilter({ min, max }: PriceFilterProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       <div className="flex items-center gap-2">
-        <input
-          type="number"
-          value={localMin}
-          min={min}
-          max={localMax}
-          onChange={(event) => setLocalMin(Number(event.target.value))}
-          onBlur={() => commit(localMin, localMax)}
-          className="w-full rounded-[3px] border border-edge bg-white px-2 py-1.5 text-center font-sans text-sm text-ink"
-        />
-        <span className="text-leather">—</span>
-        <input
-          type="number"
-          value={localMax}
-          min={localMin}
-          max={max}
-          onChange={(event) => setLocalMax(Number(event.target.value))}
-          onBlur={() => commit(localMin, localMax)}
-          className="w-full rounded-[3px] border border-edge bg-white px-2 py-1.5 text-center font-sans text-sm text-ink"
-        />
+        <div className="relative flex-1">
+          <input
+            type="number"
+            value={localMin}
+            min={min}
+            max={localMax}
+            onChange={(event) => setLocalMin(Number(event.target.value))}
+            onBlur={() => commit(localMin, localMax)}
+            className="w-full rounded-[3px] border border-edge bg-white py-1.5 pr-8 pl-2 text-right font-sans text-sm text-ink"
+          />
+          <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 font-sans text-xs text-leather">
+            грн
+          </span>
+        </div>
+        <span className="shrink-0 text-leather">—</span>
+        <div className="relative flex-1">
+          <input
+            type="number"
+            value={localMax}
+            min={localMin}
+            max={max}
+            onChange={(event) => setLocalMax(Number(event.target.value))}
+            onBlur={() => commit(localMin, localMax)}
+            className="w-full rounded-[3px] border border-edge bg-white py-1.5 pr-8 pl-2 text-right font-sans text-sm text-ink"
+          />
+          <span className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 font-sans text-xs text-leather">
+            грн
+          </span>
+        </div>
       </div>
 
       <div className="relative h-[3px] rounded-full bg-racing/20">
@@ -80,11 +90,6 @@ export function PriceFilter({ min, max }: PriceFilterProps) {
           onTouchEnd={() => commit(localMin, localMax)}
           className="range-thumb pointer-events-none absolute -top-2.5 h-6 w-full appearance-none bg-transparent"
         />
-      </div>
-
-      <div className="flex justify-between font-sans text-xs text-leather">
-        <span>{min.toLocaleString("uk-UA")} грн</span>
-        <span>{max.toLocaleString("uk-UA")} грн</span>
       </div>
     </div>
   );
