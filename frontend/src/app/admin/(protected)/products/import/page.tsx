@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { FileInput } from "@/components/admin/FileInput";
 import { AdminApiError, getImportTemplateUrl, importAdminProducts } from "@/lib/admin-api";
 import type { ProductImportReport } from "@/types/admin";
 
@@ -48,11 +49,12 @@ export default function AdminProductImportPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="mb-6 border border-edge bg-white p-6">
-        <input
-          type="file"
+        <FileInput
           accept=".csv,.xlsx"
-          onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-          className="mb-4 block font-sans text-sm text-ink"
+          onChange={setFile}
+          selectedFileName={file?.name}
+          disabled={submitting}
+          className="mb-4"
         />
         <button
           type="submit"

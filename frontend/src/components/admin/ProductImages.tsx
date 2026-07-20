@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 
+import { FileInput, type FileInputHandle } from "@/components/admin/FileInput";
 import { deleteAdminProductImage, uploadAdminProductImage, AdminApiError } from "@/lib/admin-api";
 import type { AdminProductImage } from "@/types/admin";
 
@@ -14,10 +15,9 @@ export function ProductImages({ productId, images: initialImages }: ProductImage
   const [images, setImages] = useState(initialImages);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<FileInputHandle>(null);
 
-  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+  async function handleFileSelect(file: File | null) {
     if (!file) return;
     setError(null);
     setUploading(true);
@@ -28,7 +28,7 @@ export function ProductImages({ productId, images: initialImages }: ProductImage
       setError(err instanceof AdminApiError ? err.message : "Не вдалося завантажити фото");
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      fileInputRef.current?.reset();
     }
   }
 
@@ -66,13 +66,13 @@ export function ProductImages({ productId, images: initialImages }: ProductImage
         <p className="mb-4 font-sans text-sm text-leather">Фото ще не додано</p>
       )}
 
-      <input
+      <FileInput
         ref={fileInputRef}
-        type="file"
+        variant="dropzone"
         accept=".jpg,.jpeg,.png,.webp"
-        onChange={handleFileChange}
+        onChange={handleFileSelect}
         disabled={uploading}
-        className="font-sans text-sm text-ink"
+        dropzoneLabel="Перетягніть фото сюди або клікніть, щоб обрати"
       />
       {uploading ? <p className="mt-2 font-sans text-sm text-leather">Завантажуємо…</p> : null}
       {error ? <p className="mt-2 font-sans text-sm text-error">{error}</p> : null}
