@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getFilters, getProducts } from "@/lib/api";
@@ -6,6 +7,12 @@ import { ProductCard } from "@/components/catalog/ProductCard";
 import { HeroDial } from "@/components/home/HeroDial";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { pluralize } from "@/lib/pluralize";
+
+export const metadata: Metadata = {
+  title: "LEROM Watch Co. — Наручні годинники з гарантією та доставкою по Україні",
+  description:
+    "Каталог наручних годинників LEROM: класика, спорт, мінімалізм. Оригінальний товар, гарантія 24 місяці, доставка Новою Поштою по всій Україні.",
+};
 
 const GENDER_LABELS: Record<string, string> = {
   male: "Чоловічі",
