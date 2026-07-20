@@ -18,6 +18,7 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "LEROM Watch Co. — Наручні годинники",
   description:
     "Інтернет-магазин наручних годинників LEROM. Класика, що переживе моду.",

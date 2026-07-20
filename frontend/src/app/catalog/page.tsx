@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { getFilters, getProducts } from "@/lib/api";
+import { getCategories, getFilters, getProducts } from "@/lib/api";
 import { ActiveFilters } from "@/components/catalog/ActiveFilters";
 import { FilterPanel } from "@/components/catalog/FilterPanel";
 import { Pagination } from "@/components/catalog/Pagination";
@@ -9,19 +9,92 @@ import { SortDropdown } from "@/components/catalog/SortDropdown";
 import type { CatalogSearchParams } from "@/lib/catalog-query";
 import { getParam, getParamList } from "@/lib/catalog-query";
 import { pluralize } from "@/lib/pluralize";
-import type { Gender, SortOption } from "@/types/catalog";
-
-export const metadata: Metadata = {
-  title: "Каталог наручних годинників — LEROM Watch Co.",
-  description: "Каталог наручних годинників з фільтрами за брендом, ціною, механізмом і стилем.",
-};
+import type { CategoryNode, Gender, SortOption } from "@/types/catalog";
 
 const SORT_VALUES: SortOption[] = ["newest", "price_asc", "price_desc"];
+
+// Параметри каталогу, які НЕ вважаються «фільтром» для правила noindex —
+// категорія, сортування й сторінка не створюють дублікатів контенту такою
+// самою мірою, як комбінації брендів/атрибутів/ціни, тому лишаються
+// індексованими. Усе решта (бренд, стать, механізм, ціна, розміри,
+// атрибути, знижка, пошук) — noindex, щоб не роздувати індекс тисячами
+// комбінацій на 1000+ товарів.
+const SIGNIFICANT_FILTER_KEYS = [
+  "brand",
+  "gender",
+  "mechanism",
+  "price_min",
+  "price_max",
+  "diameter_min",
+  "diameter_max",
+  "thickness_min",
+  "thickness_max",
+  "attribute_value_ids",
+  "on_sale",
+  "search",
+];
+
+function hasSignificantFilters(params: CatalogSearchParams): boolean {
+  return SIGNIFICANT_FILTER_KEYS.some((key) => {
+    const value = params[key];
+    return value !== undefined && value !== "" && !(Array.isArray(value) && value.length === 0);
+  });
+}
+
+function findCategoryName(nodes: CategoryNode[], id: number): string | undefined {
+  for (const node of nodes) {
+    if (node.id === id) return node.name;
+    const found = findCategoryName(node.children, id);
+    if (found) return found;
+  }
+  return undefined;
+}
 
 function toNumber(value: string | undefined): number | undefined {
   if (value === undefined) return undefined;
   const num = Number(value);
   return Number.isFinite(num) ? num : undefined;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const categoryId = toNumber(getParam(params, "category"));
+  const page = toNumber(getParam(params, "page"));
+
+  let categoryName: string | undefined;
+  if (categoryId !== undefined) {
+    const categories = await getCategories();
+    categoryName = findCategoryName(categories, categoryId);
+  }
+
+  const title = categoryName
+    ? `${categoryName} — каталог наручних годинників — LEROM Watch Co.`
+    : "Каталог наручних годинників — LEROM Watch Co.";
+  const description = categoryName
+    ? `Наручні годинники в категорії «${categoryName}»: широкий вибір, гарантія 24 місяці, доставка Новою Поштою.`
+    : "Каталог наручних годинників з фільтрами за брендом, ціною, механізмом і стилем.";
+
+  if (hasSignificantFilters(params)) {
+    // Директива, не підказка: гарантовано виключає комбінації фільтрів з індексу,
+    // при цьому дозволяє Google переходити за посиланнями на сторінці (усі товари
+    // однаково знаходяться через чистий /catalog і категорії).
+    return { title, description, robots: { index: false, follow: true } };
+  }
+
+  const canonicalParams = new URLSearchParams();
+  if (categoryId !== undefined) canonicalParams.set("category", String(categoryId));
+  if (page !== undefined && page > 1) canonicalParams.set("page", String(page));
+  const canonicalQuery = canonicalParams.toString();
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/catalog${canonicalQuery ? `?${canonicalQuery}` : ""}` },
+  };
 }
 
 export default async function CatalogPage({
