@@ -40,7 +40,7 @@ export function ProductCard({
   const hasDiscount = oldPrice !== null && oldPrice > price;
 
   return (
-    <div className="group flex h-full flex-col border border-edge bg-white transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:border-brass hover:shadow-[0_20px_32px_-16px_rgba(20,54,31,0.28)]">
+    <div className="group flex h-full min-w-0 flex-col border border-edge bg-white transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:border-brass hover:shadow-[0_20px_32px_-16px_rgba(20,54,31,0.28)]">
       <Link href={`/product/${slug}`} className="relative block w-full">
         <ProductImageHover images={mainImage ? [mainImage] : []} />
         <button
@@ -56,9 +56,9 @@ export function ProductCard({
         </button>
       </Link>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-3 p-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-4 sm:p-6">
         <Link href={`/product/${slug}`}>
-          <h3 className="line-clamp-2 min-h-[2.6em] font-serif text-[27px] leading-[1.3] font-medium text-ink">
+          <h3 className="line-clamp-2 min-h-[2.6em] font-serif text-[20px] leading-[1.3] font-medium break-words text-ink sm:text-[27px]">
             {name}
           </h3>
         </Link>
