@@ -3,11 +3,14 @@
 import { SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { pluralize } from "@/lib/pluralize";
+
 interface MobileFilterSheetProps {
   children: React.ReactNode;
+  resultCount: number;
 }
 
-export function MobileFilterSheet({ children }: MobileFilterSheetProps) {
+export function MobileFilterSheet({ children, resultCount }: MobileFilterSheetProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -46,8 +49,8 @@ export function MobileFilterSheet({ children }: MobileFilterSheetProps) {
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-black/40"
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-[3px] border-t border-edge bg-cream p-6 pt-5">
-            <div className="mb-5 flex items-center justify-between">
+          <div className="absolute inset-x-0 bottom-0 flex max-h-[85vh] flex-col rounded-t-[3px] border-t border-edge bg-cream">
+            <div className="flex shrink-0 items-center justify-between border-b border-edge bg-cream px-6 py-5">
               <h2 className="font-serif text-lg font-medium text-ink">Фільтри</h2>
               <button
                 type="button"
@@ -58,7 +61,18 @@ export function MobileFilterSheet({ children }: MobileFilterSheetProps) {
                 <X size={22} />
               </button>
             </div>
-            {children}
+
+            <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+
+            <div className="shrink-0 border-t border-edge bg-cream px-6 py-4">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="w-full rounded-[3px] bg-racing py-3.5 font-sans text-sm font-medium text-cream"
+              >
+                Показати {resultCount} {pluralize(resultCount, ["модель", "моделі", "моделей"])}
+              </button>
+            </div>
           </div>
         </div>
       ) : null}
