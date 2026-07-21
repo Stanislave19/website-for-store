@@ -54,6 +54,24 @@
   }
 }
 
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-edge) transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-edge);
+  border-radius: 9999px;
+}
+
 .range-thumb::-webkit-slider-thumb {
   pointer-events: auto;
   appearance: none;
