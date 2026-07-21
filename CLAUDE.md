@@ -35,7 +35,7 @@
 - Backend dev (без Docker, з `backend/`): `uvicorn app.main:app --reload`
 - Backend тести (з `backend/`): TODO — з'явиться разом із першими тестами
 - Frontend dev (без Docker, з `frontend/`): `npm run dev`
-- Frontend build (з `frontend/`): `npm run build`
+- Frontend build (з `frontend/`): `npm run build` — **очікувано НЕ працює поза Docker.** Корінний `.env` задає `API_INTERNAL_URL=http://backend:8000/api` (хост `backend` існує лише в Docker-мережі); статична генерація головної сторінки під час білду звертається саме до нього, хост не резолвиться, і білд падає з таймаутом 60с на `/page: /` після 3 спроб. Це не регресія й не привід шукати баг у щойно написаному коді — перевірено відкатом на старий коміт (та сама помилка). Перевіряти зміни через `npm run dev` або `docker-compose up`, не голим `npm run build`.
 - Пакетний менеджер (frontend): npm
 - Міграції (Alembic, з `backend/`): TODO — з'явиться на Етапі 1 (перша міграція)
 
