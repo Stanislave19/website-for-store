@@ -159,7 +159,7 @@ export default async function CatalogPage({
         )}
       </nav>
 
-      <div className="mb-8 flex items-baseline gap-3">
+      <div className="mb-8 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-3">
         <h1 className="font-serif text-[34px] font-medium text-ink">Наручні годинники</h1>
         <span className="font-sans text-[15px] text-brass">
           {productsResponse.total}{" "}
@@ -168,7 +168,7 @@ export default async function CatalogPage({
       </div>
 
       <div className="mb-6 flex gap-3 lg:hidden">
-        <MobileFilterSheet>
+        <MobileFilterSheet resultCount={productsResponse.total}>
           <FilterPanel filters={filters} searchParams={params} />
         </MobileFilterSheet>
         <MobileCategorySheet categories={categories} />
