@@ -97,7 +97,7 @@ export default async function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-10">
-          {popular.items.map((product) => (
+          {popular.items.map((product, index) => (
             <ProductCard
               key={product.id}
               id={product.id}
@@ -108,6 +108,7 @@ export default async function Home() {
               oldPrice={product.old_price}
               brand={product.brand}
               mainImage={product.main_image}
+              priority={index < 4}
             />
           ))}
         </div>

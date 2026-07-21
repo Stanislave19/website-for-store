@@ -19,6 +19,7 @@ export interface ProductCardProps {
   oldPrice: number | null;
   brand?: string;
   mainImage?: string | null;
+  priority?: boolean;
 }
 
 function formatPrice(value: number): string {
@@ -33,6 +34,7 @@ export function ProductCard({
   price,
   oldPrice,
   mainImage,
+  priority = false,
 }: ProductCardProps) {
   const { toggle, isWishlisted } = useWishlist();
   const { addItem } = useCart();
@@ -44,7 +46,7 @@ export function ProductCard({
   return (
     <div className="group flex h-full min-w-0 flex-col border border-edge bg-white transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:border-brass hover:shadow-[0_20px_32px_-16px_rgba(20,54,31,0.28)]">
       <Link href={`/product/${slug}`} className="relative block w-full">
-        <ProductImageHover images={mainImage ? [mainImage] : []} />
+        <ProductImageHover images={mainImage ? [mainImage] : []} priority={priority} />
         <button
           type="button"
           aria-label={inWishlist ? "Прибрати з обраного" : "Додати в обране"}

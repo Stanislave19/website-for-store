@@ -6,9 +6,10 @@ import { PlaceholderImage } from "./PlaceholderImage";
 
 export interface ProductImageHoverProps {
   images: string[];
+  priority?: boolean;
 }
 
-export function ProductImageHover({ images }: ProductImageHoverProps) {
+export function ProductImageHover({ images, priority = false }: ProductImageHoverProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
@@ -38,6 +39,9 @@ export function ProductImageHover({ images }: ProductImageHoverProps) {
             key={url + index}
             src={url}
             alt=""
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
             className={`aspect-square w-full bg-cream object-cover transition-opacity duration-300 ${
               index === activeIndex ? "opacity-100" : "absolute inset-0 opacity-0"
             }`}
