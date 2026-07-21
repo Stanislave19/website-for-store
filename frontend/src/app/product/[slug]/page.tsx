@@ -4,8 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/components/catalog/ProductCard";
+import { CharacteristicsList } from "@/components/product/CharacteristicsList";
+import { MobileStickyBuyBar } from "@/components/product/MobileStickyBuyBar";
 import { ProductActions } from "@/components/product/ProductActions";
 import { ProductGallery } from "@/components/product/ProductGallery";
+import { RecentlyViewedSection } from "@/components/product/RecentlyViewedSection";
+import { RecordRecentlyViewed } from "@/components/product/RecordRecentlyViewed";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { getProductBySlug, getProducts } from "@/lib/api";
 import type { ProductDetail } from "@/types/catalog";
@@ -97,9 +101,6 @@ export default async function ProductPage({
       value: attribute.value,
     })),
   ];
-  const half = Math.ceil(characteristics.length / 2);
-  const leftColumn = characteristics.slice(0, half);
-  const rightColumn = characteristics.slice(half);
 
   return (
     <main className="w-full px-6 py-8 md:px-14">
@@ -107,6 +108,7 @@ export default async function ProductPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScriptContent(buildProductJsonLd(product)) }}
       />
+      <RecordRecentlyViewed slug={product.slug} />
       <nav className="mb-6 font-sans text-[13px] text-leather">
         <Link href="/">Головна</Link>
         <span className="mx-2 text-edge">/</span>
@@ -118,7 +120,7 @@ export default async function ProductPage({
       </nav>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-        <ProductGallery images={product.images} />
+        <ProductGallery images={product.images} productName={product.name} />
 
         <div className="flex flex-col gap-4">
           <span className="font-sans text-[13px] text-brass">{product.brand}</span>
@@ -144,7 +146,16 @@ export default async function ProductPage({
             </p>
           ) : null}
 
-          <ProductActions productId={product.id} slug={product.slug} />
+          <div id="product-actions-anchor">
+            <ProductActions productId={product.id} slug={product.slug} />
+          </div>
+          <MobileStickyBuyBar
+            productId={product.id}
+            slug={product.slug}
+            name={product.name}
+            price={product.price}
+            anchorId="product-actions-anchor"
+          />
 
           <div className="flex flex-col gap-2 pt-2">
             {[
@@ -182,21 +193,7 @@ export default async function ProductPage({
 
       <section className="mt-16">
         <h2 className="mb-6 font-serif text-2xl font-medium text-ink">Характеристики</h2>
-        <div className="grid grid-cols-1 gap-x-12 md:grid-cols-2">
-          {[leftColumn, rightColumn].map((column, columnIndex) => (
-            <div key={columnIndex} className="flex flex-col">
-              {column.map((row) => (
-                <div
-                  key={row.label}
-                  className="flex justify-between border-b border-edge py-3 font-sans text-sm"
-                >
-                  <span className="text-leather">{row.label}</span>
-                  <span className="text-ink">{row.value}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
+        <CharacteristicsList characteristics={characteristics} />
       </section>
 
       <section className="mt-16">
@@ -241,6 +238,8 @@ export default async function ProductPage({
           </div>
         </section>
       ) : null}
+
+      <RecentlyViewedSection excludeSlug={product.slug} />
 
       <div className="mt-16 -mx-6 md:-mx-14">
         <TrustBadges />

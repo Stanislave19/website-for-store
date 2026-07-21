@@ -2,6 +2,8 @@
 
 import { usePathname } from "next/navigation";
 
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
+
 import { BottomNav } from "./BottomNav";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
@@ -23,6 +25,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <Header />
       <div className={`flex-1 ${hideBottomNav ? "" : "pb-[64px] lg:pb-0"}`}>{children}</div>
       <Footer />
+      <ScrollToTop />
       {hideBottomNav ? null : <BottomNav />}
     </>
   );

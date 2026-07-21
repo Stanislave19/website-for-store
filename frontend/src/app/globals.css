@@ -104,3 +104,21 @@
     animation: hero-sweep 60s linear infinite;
   }
 }
+
+@keyframes cart-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-cart-pop {
+    animation: cart-pop 0.3s ease-out;
+  }
+}

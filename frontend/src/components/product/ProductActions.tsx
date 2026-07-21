@@ -21,7 +21,9 @@ export function ProductActions({ productId, slug }: { productId: number; slug: s
           setAdded(true);
           setTimeout(() => setAdded(false), 1200);
         }}
-        className="rounded-[3px] bg-racing px-8 py-4 font-sans text-[15px] font-medium text-cream sm:w-[65%]"
+        className={`rounded-[3px] bg-racing px-8 py-4 font-sans text-[15px] font-medium text-cream sm:w-[65%] ${
+          added ? "animate-cart-pop" : ""
+        }`}
       >
         {added ? "Додано в кошик" : "Купити"}
       </button>

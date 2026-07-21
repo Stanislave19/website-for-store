@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { getCategories, getFilters, getProducts } from "@/lib/api";
 import { ActiveFilters } from "@/components/catalog/ActiveFilters";
@@ -140,8 +141,24 @@ export default async function CatalogPage({
     getCategories(),
   ]);
 
+  const categoryName = category !== undefined ? findCategoryName(categories, category) : undefined;
+
   return (
     <main className="w-full px-6 py-10 md:px-14">
+      <nav className="mb-6 font-sans text-[13px] text-leather">
+        <Link href="/">Головна</Link>
+        <span className="mx-2 text-edge">/</span>
+        {categoryName ? (
+          <>
+            <Link href="/catalog">Каталог</Link>
+            <span className="mx-2 text-edge">/</span>
+            <span className="text-ink">{categoryName}</span>
+          </>
+        ) : (
+          <span className="text-ink">Каталог</span>
+        )}
+      </nav>
+
       <div className="mb-8 flex items-baseline gap-3">
         <h1 className="font-serif text-[34px] font-medium text-ink">Наручні годинники</h1>
         <span className="font-sans text-[15px] text-brass">
@@ -157,8 +174,8 @@ export default async function CatalogPage({
         <MobileCategorySheet categories={categories} />
       </div>
 
-      <div className="flex flex-col gap-10 lg:flex-row">
-        <div className="hidden lg:block">
+      <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
+        <div className="hidden lg:sticky lg:top-6 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
           <FilterPanel filters={filters} searchParams={params} />
         </div>
 

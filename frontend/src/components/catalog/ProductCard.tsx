@@ -2,6 +2,7 @@
 
 import { Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -36,6 +37,7 @@ export function ProductCard({
   const { toggle, isWishlisted } = useWishlist();
   const { addItem } = useCart();
   const { showToast } = useToast();
+  const [justAdded, setJustAdded] = useState(false);
   const inWishlist = isWishlisted(id);
   const hasDiscount = oldPrice !== null && oldPrice > price;
 
@@ -91,6 +93,8 @@ export function ProductCard({
             aria-label="Додати в кошик"
             onClick={() => {
               addItem(id, slug);
+              setJustAdded(true);
+              setTimeout(() => setJustAdded(false), 300);
               showToast({
                 message: `${name} додано в кошик`,
                 actionLabel: "Перейти в кошик",
@@ -99,7 +103,7 @@ export function ProductCard({
             }}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[3px] bg-racing text-cream"
           >
-            <ShoppingCart size={18} />
+            <ShoppingCart size={18} className={justAdded ? "animate-cart-pop" : ""} />
           </button>
         </div>
       </div>
