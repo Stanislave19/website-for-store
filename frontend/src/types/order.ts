@@ -19,6 +19,7 @@ export interface OrderCreateRequest {
   contact_method: ContactMethod;
   comment?: string;
   promo_code?: string;
+  user_id?: number;
 }
 
 export interface OrderCreateResponse {

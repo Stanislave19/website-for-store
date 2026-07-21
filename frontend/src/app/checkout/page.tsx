@@ -3,7 +3,7 @@
 import { Bike, Package, Store, Truck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CityAutocomplete } from "@/components/checkout/CityAutocomplete";
 import { DeliveryMethodCard } from "@/components/checkout/DeliveryMethodCard";
@@ -12,6 +12,7 @@ import { WarehouseAutocomplete } from "@/components/checkout/WarehouseAutocomple
 import { useCart } from "@/hooks/useCart";
 import { useCartProducts } from "@/hooks/useCartProducts";
 import { usePromoCode } from "@/hooks/usePromoCode";
+import { getAccountSession } from "@/lib/account-api";
 import { createOrder, OrderApiError } from "@/lib/api";
 import { isValidPhoneDigits, toFullPhone } from "@/lib/validators";
 import type { City, Warehouse } from "@/types/delivery";
@@ -67,6 +68,13 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [accountUserId, setAccountUserId] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    getAccountSession()
+      .then((session) => setAccountUserId(session.id))
+      .catch(() => setAccountUserId(undefined));
+  }, []);
 
   const needsCity = deliveryMethod !== "pickup";
   const needsNpOffice = deliveryMethod === "nova_poshta";
@@ -129,6 +137,7 @@ export default function CheckoutPage() {
         contact_method: contactMethod,
         comment: comment.trim() || undefined,
         promo_code: appliedCode,
+        user_id: accountUserId,
       });
       clear();
       router.push(`/order-success?order=${response.order_id}`);
