@@ -31,8 +31,8 @@ def read_products(
     search: str | None = None,
     on_sale: bool = False,
     sort: str = "newest",
-    page: int = 1,
-    page_size: int = 24,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=24, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
     items, total = list_products(

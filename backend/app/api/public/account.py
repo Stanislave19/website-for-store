@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_client_user
@@ -28,8 +28,8 @@ router = APIRouter(dependencies=[Depends(get_current_client_user)])
 
 @router.get("/account/orders", response_model=AccountOrderListResponse)
 def read_account_orders(
-    page: int = 1,
-    page_size: int = 24,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=24, ge=1, le=100),
     user: User = Depends(get_current_client_user),
     db: Session = Depends(get_db),
 ):

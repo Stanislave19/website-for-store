@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 
@@ -43,8 +43,8 @@ router = APIRouter(dependencies=[Depends(get_current_staff_user)])
 @router.get("/admin/products", response_model=AdminProductListResponse)
 def read_admin_products(
     search: str | None = None,
-    page: int = 1,
-    page_size: int = 24,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=24, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
     items, total = list_admin_products(db, search=search, page=page, page_size=page_size)

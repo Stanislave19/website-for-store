@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.core.constants import OrderStatus
@@ -21,8 +21,8 @@ router = APIRouter(dependencies=[Depends(get_current_staff_user)])
 @router.get("/admin/orders", response_model=AdminOrderListResponse)
 def read_admin_orders(
     status: OrderStatus | None = None,
-    page: int = 1,
-    page_size: int = 24,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=24, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
     items, total = list_admin_orders(db, status=status, page=page, page_size=page_size)
