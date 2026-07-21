@@ -60,7 +60,7 @@ export function ProductCard({
         </button>
       </Link>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-3 p-4 sm:p-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-3 sm:p-5">
         <Link href={`/product/${slug}`}>
           <h3 className="line-clamp-2 min-h-[2.6em] font-serif text-[20px] leading-[1.3] font-medium break-words text-ink sm:text-[27px]">
             {name}

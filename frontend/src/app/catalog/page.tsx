@@ -175,7 +175,7 @@ export default async function CatalogPage({
       </div>
 
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
-        <div className="hidden lg:sticky lg:top-6 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
+        <div className="thin-scrollbar hidden lg:sticky lg:top-6 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
           <FilterPanel filters={filters} searchParams={params} />
         </div>
 
@@ -194,7 +194,7 @@ export default async function CatalogPage({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-10">
+            <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6">
               {productsResponse.items.map((product, index) => (
                 <ProductCard
                   key={product.id}

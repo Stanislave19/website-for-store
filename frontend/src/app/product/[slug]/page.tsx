@@ -222,7 +222,7 @@ export default async function ProductPage({
       {similar.length > 0 ? (
         <section className="mt-16">
           <h2 className="mb-6 font-serif text-2xl font-medium text-ink">Схожі моделі</h2>
-          <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-10">
+          <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6">
             {similar.map((item) => (
               <ProductCard
                 key={item.id}
