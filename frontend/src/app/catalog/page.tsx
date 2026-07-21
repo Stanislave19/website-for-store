@@ -175,7 +175,7 @@ export default async function CatalogPage({
       </div>
 
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
-        <div className="thin-scrollbar hidden lg:sticky lg:top-6 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
+        <div className="hidden lg:sticky lg:top-6 lg:block">
           <FilterPanel filters={filters} searchParams={params} />
         </div>
 
