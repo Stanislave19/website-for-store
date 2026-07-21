@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 
+import { CityAutocomplete } from "@/components/checkout/CityAutocomplete";
+import { WarehouseAutocomplete } from "@/components/checkout/WarehouseAutocomplete";
 import { AccountApiError, createAddress, deleteAddress, listAddresses } from "@/lib/account-api";
 import type { AddressOut } from "@/types/account";
+import type { City, Warehouse } from "@/types/delivery";
 import type { DeliveryMethod } from "@/types/order";
 
 const DELIVERY_OPTIONS: { value: DeliveryMethod; label: string }[] = [
@@ -27,10 +30,33 @@ export default function AccountAddressesPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [city, setCity] = useState("");
+  const [cityRef, setCityRef] = useState<string | undefined>(undefined);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("nova_poshta");
   const [npOffice, setNpOffice] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const useNovaPoshtaAutocomplete = deliveryMethod === "nova_poshta";
+
+  function handleCityTextChange(value: string) {
+    setCity(value);
+    setCityRef(undefined);
+    setNpOffice("");
+  }
+
+  function handleSelectCity(selected: City) {
+    setCity(selected.name);
+    setCityRef(selected.ref);
+    setNpOffice("");
+  }
+
+  function handleNpOfficeTextChange(value: string) {
+    setNpOffice(value);
+  }
+
+  function handleSelectWarehouse(selected: Warehouse) {
+    setNpOffice(selected.description);
+  }
 
   function load() {
     setLoading(true);
@@ -69,6 +95,7 @@ export default function AccountAddressesPage() {
       setFirstName("");
       setLastName("");
       setCity("");
+      setCityRef(undefined);
       setNpOffice("");
     } catch (err) {
       setError(err instanceof AccountApiError ? err.message : "Не вдалося додати адресу");
@@ -143,7 +170,14 @@ export default function AccountAddressesPage() {
             <label className="mb-1.5 block font-sans text-[13px] text-leather">Спосіб доставки</label>
             <select
               value={deliveryMethod}
-              onChange={(event) => setDeliveryMethod(event.target.value as DeliveryMethod)}
+              onChange={(event) => {
+                const next = event.target.value as DeliveryMethod;
+                setDeliveryMethod(next);
+                if (next !== "nova_poshta") {
+                  setCityRef(undefined);
+                  setNpOffice("");
+                }
+              }}
               className="h-11 w-full rounded-[3px] border border-edge px-3 font-sans text-[15px] text-ink outline-none focus:border-racing"
             >
               {DELIVERY_OPTIONS.map((option) => (
@@ -155,21 +189,25 @@ export default function AccountAddressesPage() {
           </div>
           <div>
             <label className="mb-1.5 block font-sans text-[13px] text-leather">Місто</label>
-            <input
-              type="text"
-              value={city}
-              onChange={(event) => setCity(event.target.value)}
-              className="h-11 w-full rounded-[3px] border border-edge px-3 font-sans text-[15px] text-ink outline-none focus:border-racing"
-            />
+            {useNovaPoshtaAutocomplete ? (
+              <CityAutocomplete value={city} onChange={handleCityTextChange} onSelectCity={handleSelectCity} />
+            ) : (
+              <input
+                type="text"
+                value={city}
+                onChange={(event) => setCity(event.target.value)}
+                className="h-11 w-full rounded-[3px] border border-edge px-3 font-sans text-[15px] text-ink outline-none focus:border-racing"
+              />
+            )}
           </div>
           {deliveryMethod === "nova_poshta" ? (
             <div className="sm:col-span-2">
               <label className="mb-1.5 block font-sans text-[13px] text-leather">Відділення</label>
-              <input
-                type="text"
+              <WarehouseAutocomplete
                 value={npOffice}
-                onChange={(event) => setNpOffice(event.target.value)}
-                className="h-11 w-full rounded-[3px] border border-edge px-3 font-sans text-[15px] text-ink outline-none focus:border-racing"
+                onChange={handleNpOfficeTextChange}
+                onSelectWarehouse={handleSelectWarehouse}
+                cityRef={cityRef}
               />
             </div>
           ) : null}
