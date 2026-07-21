@@ -7,7 +7,7 @@ from app.api.admin import products as admin_products
 from app.api.admin import promo_codes as admin_promo_codes
 from app.api.admin import references as admin_references
 from app.api.admin import settings as admin_settings
-from app.api.public import cart, catalog, delivery, orders, products
+from app.api.public import account, auth, cart, catalog, delivery, orders, products, wishlist
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(products.router, tags=["products"])
@@ -15,6 +15,9 @@ api_router.include_router(catalog.router, tags=["catalog"])
 api_router.include_router(cart.router, tags=["cart"])
 api_router.include_router(orders.router, tags=["orders"])
 api_router.include_router(delivery.router, tags=["delivery"])
+api_router.include_router(auth.router, tags=["auth"])
+api_router.include_router(wishlist.router, tags=["wishlist"])
+api_router.include_router(account.router, tags=["account"])
 api_router.include_router(admin_auth.router, tags=["admin-auth"])
 api_router.include_router(admin_products.router, tags=["admin-products"])
 api_router.include_router(admin_references.router, tags=["admin-references"])

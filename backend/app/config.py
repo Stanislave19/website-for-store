@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     admin_cookie_name: str = "admin_token"
     admin_cookie_secure: bool = False
 
+    client_token_expire_minutes: int = 60 * 24 * 30
+    client_cookie_name: str = "client_token"
+
     media_dir: str = "media"
 
     @property

@@ -18,8 +18,8 @@ def verify_password(password: str, password_hash: str) -> bool:
     return pwd_context.verify(password, password_hash)
 
 
-def create_access_token(user_id: int, role: str) -> str:
-    expires_at = datetime.now(timezone.utc) + timedelta(minutes=settings.admin_token_expire_minutes)
+def create_access_token(user_id: int, role: str, expire_minutes: int = settings.admin_token_expire_minutes) -> str:
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=expire_minutes)
     payload = {"sub": str(user_id), "role": role, "exp": expires_at}
     return jwt.encode(payload, settings.secret_key, algorithm=JWT_ALGORITHM)
 
