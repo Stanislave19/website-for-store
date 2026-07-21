@@ -1,6 +1,7 @@
 # Середовище
 .env
 .env.local
+.env.ngrok-backup
 
 # Backend (Python)
 __pycache__/
