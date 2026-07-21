@@ -10,8 +10,9 @@
 #   2. Ставить NEXT_PUBLIC_API_URL=/api — відносний шлях, щоб браузер
 #      телефону стукався в API через той самий ngrok-домен, а не в
 #      localhost:8000, якого на телефоні немає.
-#   3. Додає allowedDevOrigins у frontend/next.config.ts — без цього
-#      dev-сервер Next.js блокує запити з чужого (ngrok) origin.
+#   3. Додає allowedDevOrigins у frontend/next.config.ts (і *.app, і *.dev —
+#      безкоштовний ngrok видає домен з різним TLD залежно від сеансу) —
+#      без цього dev-сервер Next.js блокує запити з чужого (ngrok) origin.
 #   4. Перезапускає frontend-контейнер, щоб підхопив обидві зміни.
 
 set -euo pipefail
@@ -34,7 +35,7 @@ CONFIG_FILE="frontend/next.config.ts"
 if grep -q "allowedDevOrigins" "$CONFIG_FILE"; then
   echo "allowedDevOrigins уже є в next.config.ts — не чіпаю"
 else
-  sed -i 's|const nextConfig: NextConfig = {|const nextConfig: NextConfig = {\n  allowedDevOrigins: ["*.ngrok-free.app"],|' "$CONFIG_FILE"
+  sed -i 's|const nextConfig: NextConfig = {|const nextConfig: NextConfig = {\n  allowedDevOrigins: ["*.ngrok-free.app", "*.ngrok-free.dev"],|' "$CONFIG_FILE"
   echo "Додано allowedDevOrigins у next.config.ts"
 fi
 
