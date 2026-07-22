@@ -32,3 +32,13 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# SECRET_KEY підписує всі JWT-токени (адмінка й клієнти). Дефолтне значення
+# з .env.example ("change_me") не має потрапити на прод чи в жоден реальний
+# .env — інакше будь-хто, хто бачив цей код, може підробити токен адміна.
+# Падаємо одразу при старті, а не мовчки працюємо з дірявим секретом.
+if settings.secret_key.strip() in {"", "change_me"}:
+    raise RuntimeError(
+        "SECRET_KEY не задано або лишено дефолтним ('change_me'). "
+        "Згенеруйте випадковий секрет і впишіть його в .env як SECRET_KEY."
+    )
