@@ -14,6 +14,11 @@ import { getParam, getParamList } from "@/lib/catalog-query";
 import { pluralize } from "@/lib/pluralize";
 import type { CategoryNode, Gender, SortOption } from "@/types/catalog";
 
+// Каталог і ціни змінюються з адмінки постійно — рендеримо на кожен запит,
+// а не запікаємо статично при білді (заразом уникає звернення до backend
+// під час docker build, коли контейнер backend ще не запущений).
+export const dynamic = "force-dynamic";
+
 const SORT_VALUES: SortOption[] = ["newest", "price_asc", "price_desc"];
 
 // Параметри каталогу, які НЕ вважаються «фільтром» для правила noindex —

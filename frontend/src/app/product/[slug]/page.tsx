@@ -14,6 +14,11 @@ import { TrustBadges } from "@/components/ui/TrustBadges";
 import { getProductBySlug, getProducts } from "@/lib/api";
 import type { ProductDetail } from "@/types/catalog";
 
+// Товар і ціна змінюються з адмінки постійно — рендеримо на кожен запит,
+// а не запікаємо статично при білді (заразом уникає звернення до backend
+// під час docker build, коли контейнер backend ще не запущений).
+export const dynamic = "force-dynamic";
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost";
 
 function buildProductJsonLd(product: ProductDetail) {

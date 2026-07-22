@@ -8,6 +8,11 @@ import { HeroDial } from "@/components/home/HeroDial";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { pluralize } from "@/lib/pluralize";
 
+// Каталог і ціни змінюються з адмінки постійно — рендеримо на кожен запит,
+// а не запікаємо статично при білді (заразом уникає звернення до backend
+// під час docker build, коли контейнер backend ще не запущений).
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "LEROM Watch Co. — Наручні годинники з гарантією та доставкою по Україні",
   description:

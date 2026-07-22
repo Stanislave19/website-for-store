@@ -1,0 +1,19 @@
+# Продовий оверрай поверх docker-compose.yml. Запуск на сервері:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Відмінності від dev-версії:
+# - backend/frontend збираються з Dockerfile.prod (без --reload / без dev-режиму next)
+# - код НЕ монтується з хоста — їде всередину образу, як буде на реальному сервері
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    volumes: !override
+      - media_data:/app/media
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    volumes: !override []
