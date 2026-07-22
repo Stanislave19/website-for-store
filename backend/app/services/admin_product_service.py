@@ -1,9 +1,11 @@
+import io
 import math
 import os
 import uuid
 from pathlib import Path
 
 from fastapi import UploadFile
+from PIL import Image, UnidentifiedImageError
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
@@ -228,6 +230,15 @@ def delete_product(db: Session, product_id: int) -> None:
 
 
 def add_product_image_from_bytes(db: Session, product: Product, extension: str, content: bytes) -> ProductImage:
+    # Розширення й Content-Type легко підробити (перейменований .exe/.php під
+    # виглядом .jpg) — тому тут реально відкриваємо байти як зображення,
+    # незалежно від того, звідки вони прийшли (ручне завантаження чи імпорт по URL).
+    try:
+        with Image.open(io.BytesIO(content)) as img:
+            img.verify()
+    except (UnidentifiedImageError, OSError) as exc:
+        raise InvalidImageError("Файл пошкоджений або не є зображенням") from exc
+
     filename = f"{product.slug}-{uuid.uuid4().hex[:8]}{extension}"
     media_dir = Path(settings.media_dir)
     media_dir.mkdir(parents=True, exist_ok=True)

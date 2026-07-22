@@ -18,6 +18,7 @@ from app.schemas.admin_import import ProductImportReport, ProductImportRowError
 from app.schemas.admin_product import ProductCreateRequest, ProductUpdateRequest
 from app.services.admin_product_service import (
     ALLOWED_IMAGE_EXTENSIONS,
+    InvalidImageError,
     add_product_image_from_bytes,
     create_product,
     get_product_by_sku,
@@ -414,7 +415,7 @@ def import_products(db: Session, rows: list[dict[str, str]]) -> ProductImportRep
 
         try:
             _attach_import_photos(db, product, row)
-        except ImageDownloadError as exc:
+        except (ImageDownloadError, InvalidImageError) as exc:
             # Товар уже створено/оновлено — рахуємо рядок успішним, але повідомляємо про фото окремо.
             db.rollback()
             errors.append(ProductImportRowError(row=spreadsheet_row, message=str(exc)))
