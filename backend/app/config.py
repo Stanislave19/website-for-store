@@ -13,7 +13,11 @@ class Settings(BaseSettings):
 
     nova_poshta_api_key: str = ""
 
-    admin_token_expire_minutes: int = 60 * 24 * 14
+    # 72 години: адмінський токен не відкликається на сервері (logout лише
+    # чистить куку в браузері), тому довший термін життя означає довше вікно
+    # зловживання вкраденою кукою. 3 доби — компроміс між безпекою й тим, щоб
+    # не перелогинюватись щодня.
+    admin_token_expire_minutes: int = 60 * 24 * 3
     admin_cookie_name: str = "admin_token"
     admin_cookie_secure: bool = False
 
