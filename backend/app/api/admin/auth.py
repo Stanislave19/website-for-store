@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.core.deps import get_current_staff_user
+from app.core.rate_limit import make_rate_limiter
 from app.core.security import create_access_token, verify_password
 from app.database import get_db
 from app.models.users import User
@@ -11,8 +12,12 @@ from app.schemas.auth import AdminLoginRequest, AdminLoginResponse
 
 router = APIRouter()
 
+rate_limit = make_rate_limiter(
+    max_requests=5, window_seconds=60, message="Забагато спроб входу. Спробуйте пізніше."
+)
 
-@router.post("/admin/login", response_model=AdminLoginResponse)
+
+@router.post("/admin/login", response_model=AdminLoginResponse, dependencies=[Depends(rate_limit)])
 def admin_login(payload: AdminLoginRequest, response: Response, db: Session = Depends(get_db)):
     user = db.scalar(select(User).where(User.email == payload.email.strip().lower()))
     if not user or not verify_password(payload.password, user.password_hash):
