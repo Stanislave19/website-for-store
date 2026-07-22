@@ -10,8 +10,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # Порт 5432 навмисно НЕ проброшено на хост — на реальному сервері це
+    # відкрило б базу для всього інтернету. Backend і так з'єднується з нею
+    # всередині docker-мережі за іменем сервіса "db". Для ручного доступу
+    # з хоста (напр. через pgAdmin/DBeaver) — docker compose exec db psql
+    # -U "$POSTGRES_USER" -d "$POSTGRES_DB", або тимчасово додати
+    # "ports: - 5432:5432" локально, не комітячи цю зміну.
 
   backend:
     build: ./backend
