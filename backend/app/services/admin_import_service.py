@@ -27,6 +27,12 @@ from app.services.admin_product_service import (
 
 ALLOWED_IMPORT_EXTENSIONS = {".csv", ".xlsx"}
 MAX_IMAGE_DOWNLOAD_BYTES = 8 * 1024 * 1024
+
+# Гарантія — загальна умова магазину (єдиний термін для всього асортименту,
+# узгоджується напряму з постачальником), не властивість конкретної моделі.
+# Тому імпорт завжди підставляє цю константу, а не читає її з файлу.
+DEFAULT_WARRANTY_MONTHS = 12
+
 IMAGE_CONTENT_TYPE_EXTENSIONS = {
     "image/jpeg": ".jpg",
     "image/jpg": ".jpg",
@@ -50,7 +56,6 @@ FIXED_COLUMNS_ORDER = (
     "Стать",
     "Діаметр_мм",
     "Товщина_мм",
-    "Гарантія_міс",
     "Комплектація",
     "Активний",
     "Фото",
@@ -69,7 +74,6 @@ TEMPLATE_EXAMPLE_ROW = {
     "Стать": "Чоловічі",
     "Діаметр_мм": "40",
     "Товщина_мм": "",
-    "Гарантія_міс": "24",
     "Комплектація": "Коробка, гарантійний талон",
     "Активний": "так",
     "Фото": "https://example.com/photo1.jpg;https://example.com/photo2.jpg",
@@ -332,7 +336,6 @@ def _import_single_row(
 
     case_diameter_mm = parse_optional_int(row.get("Діаметр_мм", ""), "Діаметр_мм")
     case_thickness_mm = parse_optional_int(row.get("Товщина_мм", ""), "Товщина_мм")
-    warranty_months = parse_optional_int(row.get("Гарантія_міс", ""), "Гарантія_міс")
     package_contents = row.get("Комплектація", "").strip() or None
     description = row.get("Опис", "").strip() or None
     is_active = parse_bool(row.get("Активний", ""), default=True)
@@ -363,7 +366,7 @@ def _import_single_row(
         gender=gender,
         case_diameter_mm=case_diameter_mm,
         case_thickness_mm=case_thickness_mm,
-        warranty_months=warranty_months,
+        warranty_months=DEFAULT_WARRANTY_MONTHS,
         package_contents=package_contents,
         is_active=is_active,
         attribute_value_ids=attribute_value_ids,
