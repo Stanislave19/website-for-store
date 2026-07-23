@@ -58,11 +58,11 @@ export default function AccountWishlistPage() {
         Список бажань — {items.length} {pluralize(items.length, ["модель", "моделі", "моделей"])}
       </h1>
 
-      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+      <div className="grid grid-cols-2 border-t border-l border-edge lg:grid-cols-4">
         {items.map((item) => {
           const hasDiscount = item.old_price !== null && item.old_price > item.price;
           return (
-            <div key={item.product_id} className="flex h-full flex-col border border-edge bg-white">
+            <div key={item.product_id} className="flex h-full flex-col border-r border-b border-edge bg-white">
               <Link href={`/product/${item.slug}`} className="relative block w-full">
                 <ProductImageHover images={item.main_image ? [item.main_image] : []} />
               </Link>

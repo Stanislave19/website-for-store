@@ -15,10 +15,10 @@ export default function CatalogLoading() {
           <div className="mb-6 flex justify-end">
             <div className="h-11 w-40 animate-pulse rounded-[3px] bg-edge/40" />
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+          <div className="grid grid-cols-2 border-t border-l border-edge lg:grid-cols-4">
             {Array.from({ length: 8 }, (_, i) => (
-              <div key={i} className="flex flex-col gap-3">
-                <div className="aspect-square animate-pulse border border-edge bg-edge/40" />
+              <div key={i} className="flex flex-col gap-3 border-r border-b border-edge p-3 sm:p-5">
+                <div className="aspect-square animate-pulse bg-edge/40" />
                 <div className="h-4 w-3/4 animate-pulse rounded-sm bg-edge/40" />
                 <div className="h-5 w-1/2 animate-pulse rounded-sm bg-edge/40" />
               </div>
