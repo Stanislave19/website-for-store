@@ -4,7 +4,7 @@ import "./globals.css";
 
 import { SearchOverlayProvider } from "@/components/layout/SearchOverlay";
 import { SiteChrome } from "@/components/layout/SiteChrome";
-import { ToastProvider } from "@/components/ui/ToastProvider";
+import { AddedToCartProvider } from "@/components/ui/AddedToCartModal";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -34,11 +34,11 @@ export default function RootLayout({
   return (
     <html lang="uk" className={`${fraunces.variable} ${workSans.variable}`}>
       <body suppressHydrationWarning>
-        <ToastProvider>
+        <AddedToCartProvider>
           <SearchOverlayProvider>
             <SiteChrome>{children}</SiteChrome>
           </SearchOverlayProvider>
-        </ToastProvider>
+        </AddedToCartProvider>
       </body>
     </html>
   );
