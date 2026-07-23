@@ -7,7 +7,7 @@ import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { getProductBySlug } from "@/lib/api";
 import type { ProductDetail } from "@/types/catalog";
 
-export function RecentlyViewedSection({ excludeSlug }: { excludeSlug: string }) {
+export function RecentlyViewedSection({ excludeSlug }: { excludeSlug?: string }) {
   const { slugs } = useRecentlyViewed();
   const [products, setProducts] = useState<ProductDetail[]>([]);
 

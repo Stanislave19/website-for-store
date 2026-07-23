@@ -9,6 +9,7 @@ import { MobileFilterSheet } from "@/components/catalog/MobileFilterSheet";
 import { Pagination } from "@/components/catalog/Pagination";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { SortDropdown } from "@/components/catalog/SortDropdown";
+import { RecentlyViewedSection } from "@/components/product/RecentlyViewedSection";
 import type { CatalogSearchParams } from "@/lib/catalog-query";
 import { getParam, getParamList } from "@/lib/catalog-query";
 import { pluralize } from "@/lib/pluralize";
@@ -218,6 +219,8 @@ export default async function CatalogPage({
           )}
 
           <Pagination page={productsResponse.page} pages={productsResponse.pages} searchParams={params} />
+
+          <RecentlyViewedSection />
         </div>
       </div>
     </main>
