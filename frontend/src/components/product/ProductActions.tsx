@@ -3,12 +3,26 @@
 import { Heart } from "lucide-react";
 import { useState } from "react";
 
+import { useAddedToCart } from "@/components/ui/AddedToCartModal";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 
-export function ProductActions({ productId, slug }: { productId: number; slug: string }) {
+export function ProductActions({
+  productId,
+  slug,
+  name,
+  price,
+  image,
+}: {
+  productId: number;
+  slug: string;
+  name: string;
+  price: number;
+  image: string | null;
+}) {
   const { addItem } = useCart();
   const { toggle, isWishlisted } = useWishlist();
+  const { showAddedToCart } = useAddedToCart();
   const [added, setAdded] = useState(false);
   const inWishlist = isWishlisted(productId);
 
@@ -20,6 +34,7 @@ export function ProductActions({ productId, slug }: { productId: number; slug: s
           addItem(productId, slug);
           setAdded(true);
           setTimeout(() => setAdded(false), 1200);
+          showAddedToCart({ slug, name, image, price });
         }}
         className={`rounded-[3px] bg-racing px-8 py-4 font-sans text-[15px] font-medium text-cream sm:w-[65%] ${
           added ? "animate-cart-pop" : ""

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { useAddedToCart } from "@/components/ui/AddedToCartModal";
 import { useCart } from "@/hooks/useCart";
 
 function formatPrice(value: number): string {
@@ -13,15 +14,18 @@ export function MobileStickyBuyBar({
   slug,
   name,
   price,
+  image,
   anchorId,
 }: {
   productId: number;
   slug: string;
   name: string;
   price: number;
+  image: string | null;
   anchorId: string;
 }) {
   const { addItem } = useCart();
+  const { showAddedToCart } = useAddedToCart();
   const [visible, setVisible] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -54,6 +58,7 @@ export function MobileStickyBuyBar({
             addItem(productId, slug);
             setAdded(true);
             setTimeout(() => setAdded(false), 1200);
+            showAddedToCart({ slug, name, image, price });
           }}
           className={`shrink-0 rounded-[3px] bg-racing px-6 py-3 font-sans text-sm font-medium text-cream ${
             added ? "animate-cart-pop" : ""
