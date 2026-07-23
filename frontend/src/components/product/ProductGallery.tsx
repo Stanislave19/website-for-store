@@ -1,9 +1,12 @@
 "use client";
 
+import { Maximize2 } from "lucide-react";
 import { useState, type MouseEvent } from "react";
 
 import { PlaceholderImage } from "@/components/catalog/PlaceholderImage";
 import type { ProductImage } from "@/types/catalog";
+
+import { GalleryLightbox } from "./GalleryLightbox";
 
 const ZOOM_SCALE = 2;
 
@@ -11,6 +14,7 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomOrigin, setZoomOrigin] = useState("50% 50%");
   const [zoomed, setZoomed] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const sorted = [...images].sort((a, b) => a.position - b.position);
   const active = sorted[activeIndex];
 
@@ -51,10 +55,11 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
 
       <div className="relative flex-1 md:order-2">
         <div
-          className="relative aspect-square w-full overflow-hidden border border-edge bg-cream"
+          className={`relative aspect-square w-full overflow-hidden border border-edge bg-cream ${active ? "cursor-zoom-in" : ""}`}
           onMouseMove={active ? handleMouseMove : undefined}
           onMouseEnter={() => setZoomed(true)}
           onMouseLeave={() => setZoomed(false)}
+          onClick={active ? () => setLightboxOpen(true) : undefined}
         >
           {active ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -74,6 +79,13 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
             <PlaceholderImage />
           )}
 
+          {active ? (
+            <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-sm border border-edge bg-cream/90 px-2.5 py-1 font-sans text-[11px] text-leather">
+              <Maximize2 size={12} />
+              Збільшити
+            </span>
+          ) : null}
+
           {sorted.length > 1 ? (
             <span className="absolute right-3 bottom-3 rounded-sm border border-edge bg-cream/90 px-2.5 py-1 font-sans text-[11px] text-leather">
               {activeIndex + 1} / {sorted.length}
@@ -81,6 +93,16 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
           ) : null}
         </div>
       </div>
+
+      {lightboxOpen ? (
+        <GalleryLightbox
+          images={sorted}
+          productName={productName}
+          activeIndex={activeIndex}
+          onIndexChange={setActiveIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }
