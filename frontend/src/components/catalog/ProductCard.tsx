@@ -44,7 +44,7 @@ export function ProductCard({
   const hasDiscount = oldPrice !== null && oldPrice > price;
 
   return (
-    <div className="group flex h-full min-w-0 flex-col border border-edge bg-white transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:border-brass hover:shadow-[0_20px_32px_-16px_rgba(20,54,31,0.28)]">
+    <div className="group relative flex h-full min-w-0 flex-col border-r border-b border-edge bg-white transition-[transform,box-shadow] duration-300 ease-out hover:z-10 hover:-translate-y-2 hover:shadow-[0_20px_32px_-16px_rgba(20,54,31,0.28)]">
       <Link href={`/product/${slug}`} className="relative block w-full">
         <ProductImageHover images={mainImage ? [mainImage] : []} priority={priority} />
         <button

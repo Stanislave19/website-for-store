@@ -199,7 +199,7 @@ export default async function CatalogPage({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+            <div className="grid grid-cols-2 border-t border-l border-edge lg:grid-cols-4">
               {productsResponse.items.map((product, index) => (
                 <ProductCard
                   key={product.id}
