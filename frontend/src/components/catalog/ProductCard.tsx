@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
-import { useToast } from "@/components/ui/ToastProvider";
+import { useAddedToCart } from "@/components/ui/AddedToCartModal";
 
 import { ProductImageHover } from "./ProductImageHover";
 
@@ -38,7 +38,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const { toggle, isWishlisted } = useWishlist();
   const { addItem } = useCart();
-  const { showToast } = useToast();
+  const { showAddedToCart } = useAddedToCart();
   const [justAdded, setJustAdded] = useState(false);
   const inWishlist = isWishlisted(id);
   const hasDiscount = oldPrice !== null && oldPrice > price;
@@ -97,11 +97,7 @@ export function ProductCard({
               addItem(id, slug);
               setJustAdded(true);
               setTimeout(() => setJustAdded(false), 300);
-              showToast({
-                message: `${name} додано в кошик`,
-                actionLabel: "Перейти в кошик",
-                actionHref: "/cart",
-              });
+              showAddedToCart({ slug, name, image: mainImage ?? null, price });
             }}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[3px] bg-racing text-cream"
           >
