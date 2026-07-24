@@ -184,15 +184,6 @@ def parse_optional_decimal(value: str, field_label: str) -> Decimal | None:
     return parse_required_decimal(value, field_label)
 
 
-def parse_optional_int(value: str, field_label: str) -> int | None:
-    if not value.strip():
-        return None
-    try:
-        return int(value.strip())
-    except ValueError as exc:
-        raise ValueError(f"Поле «{field_label}» має бути цілим числом") from exc
-
-
 def resolve_category(db: Session, name: str) -> Category:
     category = db.scalar(select(Category).where(func.lower(Category.name) == name.strip().lower()))
     if category is None:
@@ -334,8 +325,8 @@ def _import_single_row(
         raise ValueError("Колонка «Стать» обов'язкова")
     gender = parse_gender(gender_value)
 
-    case_diameter_mm = parse_optional_int(row.get("Діаметр_мм", ""), "Діаметр_мм")
-    case_thickness_mm = parse_optional_int(row.get("Товщина_мм", ""), "Товщина_мм")
+    case_diameter_mm = parse_optional_decimal(row.get("Діаметр_мм", ""), "Діаметр_мм")
+    case_thickness_mm = parse_optional_decimal(row.get("Товщина_мм", ""), "Товщина_мм")
     package_contents = row.get("Комплектація", "").strip() or None
     description = row.get("Опис", "").strip() or None
     is_active = parse_bool(row.get("Активний", ""), default=True)

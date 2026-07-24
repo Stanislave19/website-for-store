@@ -48,8 +48,8 @@ class AdminProductDetail(BaseModel):
     brand_id: int
     mechanism_type_id: int
     gender: Gender
-    case_diameter_mm: int | None
-    case_thickness_mm: int | None
+    case_diameter_mm: float | None
+    case_thickness_mm: float | None
     warranty_months: int | None
     package_contents: str | None
     is_active: bool
@@ -68,8 +68,8 @@ class ProductCreateRequest(BaseModel):
     brand_id: int
     mechanism_type_id: int
     gender: Gender
-    case_diameter_mm: int | None = None
-    case_thickness_mm: int | None = None
+    case_diameter_mm: float | None = None
+    case_thickness_mm: float | None = None
     warranty_months: int | None = None
     package_contents: str | None = None
     is_active: bool = True
@@ -86,8 +86,8 @@ class ProductUpdateRequest(BaseModel):
     brand_id: int | None = None
     mechanism_type_id: int | None = None
     gender: Gender | None = None
-    case_diameter_mm: int | None = None
-    case_thickness_mm: int | None = None
+    case_diameter_mm: float | None = None
+    case_thickness_mm: float | None = None
     warranty_months: int | None = None
     package_contents: str | None = None
     is_active: bool | None = None

@@ -60,8 +60,8 @@ class ProductDetail(BaseModel):
     brand: str
     mechanism_type: str
     gender: Gender
-    case_diameter_mm: int | None
-    case_thickness_mm: int | None
+    case_diameter_mm: float | None
+    case_thickness_mm: float | None
     warranty_months: int | None
     package_contents: str | None
     is_active: bool

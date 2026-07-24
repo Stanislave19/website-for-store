@@ -297,6 +297,7 @@ export function ProductForm({ product }: ProductFormProps) {
             <input
               type="number"
               min={0}
+              step={0.1}
               value={caseDiameterMm}
               onChange={(e) => setCaseDiameterMm(e.target.value)}
               className={inputClass}
@@ -306,6 +307,7 @@ export function ProductForm({ product }: ProductFormProps) {
             <input
               type="number"
               min={0}
+              step={0.1}
               value={caseThicknessMm}
               onChange={(e) => setCaseThicknessMm(e.target.value)}
               className={inputClass}
